@@ -1,0 +1,126 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #0e0e0e;
+  --text: #e8e8e8;
+  --muted: #666;
+  --accent: #c8b89a;
+  --divider: #1e1e1e;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'Georgia', serif;
+  line-height: 1.75;
+  min-height: 100vh;
+}
+
+header {
+  text-align: center;
+  padding: 80px 24px 48px;
+  border-bottom: 1px solid var(--divider);
+}
+
+header h1 {
+  font-size: clamp(1.2rem, 3vw, 1.6rem);
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+header p {
+  margin-top: 12px;
+  font-size: 0.85rem;
+  color: #444;
+  letter-spacing: 0.08em;
+}
+
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.quote-entry {
+  padding: 72px 0;
+  border-bottom: 1px solid var(--divider);
+}
+
+.quote-entry:last-child {
+  border-bottom: none;
+}
+
+blockquote {
+  position: relative;
+  padding-left: 0;
+  margin-bottom: 36px;
+}
+
+blockquote::before {
+  content: '\201C';
+  position: absolute;
+  top: -24px;
+  left: -8px;
+  font-size: 5rem;
+  color: var(--divider);
+  font-family: Georgia, serif;
+  line-height: 1;
+  pointer-events: none;
+}
+
+blockquote p {
+  font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+  line-height: 1.65;
+  color: var(--text);
+  font-style: italic;
+}
+
+.attribution {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.attribution .name {
+  font-size: 0.95rem;
+  font-family: 'Courier New', monospace;
+  color: var(--accent);
+  letter-spacing: 0.06em;
+}
+
+.attribution .title {
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-family: 'Courier New', monospace;
+}
+
+.profile {
+  font-size: 0.88rem;
+  color: #888;
+  line-height: 1.8;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-style: normal;
+  border-left: 2px solid var(--divider);
+  padding-left: 16px;
+}
+
+footer {
+  text-align: center;
+  padding: 48px 24px 64px;
+  font-size: 0.75rem;
+  color: #333;
+  letter-spacing: 0.08em;
+  font-family: 'Courier New', monospace;
+}
