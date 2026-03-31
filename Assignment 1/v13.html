@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Would You Rather v13 - Tabloid + Bubblegum</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Playfair+Display:wght@700;900&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Fredoka', sans-serif; background: #fff0f5; color: #333;
+            min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+            justify-content: center; padding: 40px 20px;
+        }
+        .masthead {
+            text-align: center; margin-bottom: 6px;
+            border-bottom: 3px double #ff69b4; padding-bottom: 16px; width: 100%; max-width: 560px;
+        }
+        .masthead h1 {
+            font-family: 'Playfair Display', serif; font-size: 3rem; font-weight: 900;
+            color: #ff1493; letter-spacing: -1px;
+        }
+        .masthead-sub { font-size: 0.7rem; letter-spacing: 5px; text-transform: uppercase; color: #c9a; }
+        .edition { font-size: 0.6rem; color: #daa; letter-spacing: 3px; text-transform: uppercase; margin: 8px 0 24px; }
+        .container { max-width: 560px; width: 100%; }
+
+        .star-prog { display: flex; gap: 5px; justify-content: center; margin-bottom: 14px; }
+        .star { font-size: 1.2rem; color: #ffd1e8; transition: all 0.3s; }
+        .star.done { color: #ff69b4; }
+        .star.active { color: #ff1493; animation: bounce 0.5s infinite alternate; }
+        @keyframes bounce { from{transform:translateY(0)} to{transform:translateY(-3px)} }
+
+        .card {
+            background: #fff; border-radius: 24px; padding: 36px 28px;
+            box-shadow: 0 6px 30px rgba(255,20,147,0.1); border: 2px solid #ffd1e8;
+            text-align: center;
+        }
+        .q-tag { font-size: 0.6rem; letter-spacing: 4px; text-transform: uppercase; color: #c0392b; margin-bottom: 8px; }
+        .wyr { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; color: #333; margin-bottom: 24px; }
+        .opt-btn {
+            display: block; width: 100%; padding: 18px 20px; margin: 8px 0;
+            border-radius: 18px; border: 2px solid; font-family: 'Fredoka', sans-serif;
+            font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
+            line-height: 1.5; color: #fff;
+        }
+        .opt-btn:first-of-type { background: linear-gradient(135deg,#ff69b4,#ff1493); border-color: #ff1493; }
+        .opt-btn:last-of-type { background: linear-gradient(135deg,#87ceeb,#4fc3f7); border-color: #4fc3f7; }
+        .opt-btn:hover { transform: scale(1.03) rotate(-0.5deg); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+        .or-line {
+            font-family: 'Playfair Display', serif; font-style: italic; color: #ccc;
+            font-size: 0.9rem; margin: 6px 0;
+        }
+
+        .results { display: none; }
+        .results h2 { font-family: 'Playfair Display', serif; font-size: 2rem; text-align: center; color: #ff1493; margin-bottom: 4px; }
+        .results .sub { text-align: center; color: #c9a; margin-bottom: 24px; font-size: 0.85rem; font-style: italic; }
+        .verdict-card {
+            background: linear-gradient(135deg,#ff69b4,#ff1493,#c471ed);
+            border-radius: 24px; padding: 32px; text-align: center; color: #fff; margin-bottom: 18px;
+        }
+        .verdict-title { font-family: 'Playfair Display', serif; font-size: 1.6rem; margin-bottom: 8px; }
+        .verdict-desc { font-size: 0.95rem; line-height: 1.7; }
+        .stat-row { display: flex; gap: 10px; margin-bottom: 14px; }
+        .stat-box { flex: 1; background: #fff; border: 2px solid #ffd1e8; border-radius: 18px; padding: 16px; text-align: center; }
+        .stat-box .num { font-size: 1.8rem; font-weight: 700; color: #ff1493; }
+        .stat-box .lbl { font-size: 0.65rem; color: #c9a; }
+        .log-box { background: #fff; border: 2px solid #ffd1e8; border-radius: 20px; padding: 22px; }
+        .log-box h3 { font-size: 0.85rem; color: #ff69b4; margin-bottom: 10px; }
+        .log-entry { padding: 8px 0; border-bottom: 2px dashed #ffd1e8; font-size: 0.85rem; color: #888; line-height: 1.5; }
+        .log-entry:last-child { border-bottom: none; }
+        .log-entry span { color: #ff1493; font-weight: 600; }
+        .restart-btn {
+            display: block; width: 100%; padding: 16px; margin-top: 16px;
+            border-radius: 50px; border: 2px solid #ff69b4; background: #fff; color: #ff69b4;
+            font-family: 'Fredoka', sans-serif; font-size: 1rem; font-weight: 700; cursor: pointer;
+        }
+        .restart-btn:hover { background: #ff69b4; color: #fff; }
+    </style>
+</head>
+<body>
+    <div class="masthead">
+        <h1>The Daily Dilemma</h1>
+        <div class="masthead-sub">gossip column for your personality</div>
+    </div>
+    <div class="edition">Spring 2026 &bull; Price: Your Dignity &bull; No Refunds</div>
+    <div class="container">
+        <div id="game">
+            <div class="star-prog" id="star-prog"></div>
+            <div class="card">
+                <div class="q-tag" id="q-tag">Dilemma No. 1</div>
+                <div class="wyr">Would you rather...</div>
+                <button class="opt-btn" id="optA" onclick="pick('A')"></button>
+                <div class="or-line">— or —</div>
+                <button class="opt-btn" id="optB" onclick="pick('B')"></button>
+            </div>
+        </div>
+        <div class="results" id="results">
+            <h2>Extra! Extra!</h2>
+            <p class="sub">your personality just got front-paged bestie</p>
+            <div class="verdict-card"><div class="verdict-title" id="p-title"></div><p class="verdict-desc" id="p-desc"></p></div>
+            <div class="stat-row">
+                <div class="stat-box"><div class="num" id="stat-chaotic">0</div><div class="lbl">chaotic</div></div>
+                <div class="stat-box"><div class="num" id="stat-safe">0</div><div class="lbl">safe</div></div>
+                <div class="stat-box"><div class="num" id="stat-unhinged">0</div><div class="lbl">unhinged</div></div>
+            </div>
+            <div class="log-box"><h3>the receipts</h3><div id="choices-log"></div></div>
+            <button class="restart-btn" onclick="restart()">read next edition</button>
+        </div>
+    </div>
+    <script>
+    var questions=[{a:"Have Michael Scott as your boss for life",b:"Eat only gas station sushi forever",chaotic:"B",tagA:"SOURCES SAY: reader accepts cringe leadership",tagB:"BREAKING: reader's stomach files for divorce"},{a:"Fight 100 duck-sized horses",b:"Fight 1 horse-sized duck",chaotic:"B",tagA:"SWARM TACTICS chosen by local reader",tagB:"GIANT DUCK APPROACHES: reader undeterred"},{a:"Dwight Schrute as your roommate",b:"Ross Geller as your therapist",chaotic:"A",tagA:"BEET FARMER MOVES IN, sources confirm",tagB:"THERAPIST BRINGS UP OWN DIVORCE again"},{a:"Only speak in movie quotes for a year",b:"Laugh track after everything you say",chaotic:"A",tagA:"\"I'LL BE BACK\" — reader, leaving Target",tagB:"LAUGH TRACK RUINS local wedding ceremony"},{a:"Elevator with Sheldon Cooper, 8 hours",b:"Gordon Ramsay roasts you on live TV",chaotic:"B",tagA:"PHYSICS LECTURE TRAPS commuter for 8 hours",tagB:"CELEBRITY CHEF DESTROYS reader on national TV"},{a:"Ron Swanson's mustache permanently",b:"Kramer's hair permanently",chaotic:"B",tagA:"MUSTACHE grants instant authority, report says",tagB:"UNRULY HAIR causes slapstick incidents daily"},{a:"No phone for a year",b:"No shower for 3 months",chaotic:"B",tagA:"DIGITAL DETOX: friends forget reader exists",tagB:"HYGIENE CRISIS: 15-foot exclusion zone established"},{a:"Passive-aggressive Morgan Freeman narration",b:"Hype man who's always wrong",chaotic:"B",tagA:"NARRATOR SHADES reader's dinner choices",tagB:"HYPE MAN CELEBRATES wrong accomplishments"},{a:"Live in The Office universe",b:"Live in Parks and Rec universe",chaotic:"A",tagA:"SCRANTON GAINS RESIDENT: experts baffled",tagB:"PAWNEE WELCOMES newcomer: waffles served"},{a:"GoT theme every time you sit",b:"DUN DUN every time you stand",chaotic:"A",tagA:"ORCHESTRAL SCORE accompanies bathroom visits",tagB:"SOUND EFFECT disrupts funeral service"}];
+    var current=0,answers=[],chaoticCount=0;
+    function buildStars(){var h='';for(var i=0;i<questions.length;i++)h+='<div class="star" id="s'+i+'">★</div>';document.getElementById('star-prog').innerHTML=h;}
+    function updateStars(){for(var i=0;i<questions.length;i++){var s=document.getElementById('s'+i);s.className='star';if(i<current)s.classList.add('done');if(i===current)s.classList.add('active');}}
+    function showQuestion(){var q=questions[current];document.getElementById('q-tag').textContent='Dilemma No. '+(current+1);document.getElementById('optA').textContent=q.a;document.getElementById('optB').textContent=q.b;updateStars();}
+    function pick(c){var q=questions[current],ch=c===q.chaotic;if(ch)chaoticCount++;answers.push({num:current+1,chose:c==='A'?q.a:q.b,tag:c==='A'?q.tagA:q.tagB});current++;if(current<questions.length)showQuestion();else showResults();}
+    function showResults(){document.getElementById('game').style.display='none';document.getElementById('results').style.display='block';var s=questions.length-chaoticCount,p=Math.round(chaoticCount/questions.length*100);document.getElementById('stat-chaotic').textContent=chaoticCount;document.getElementById('stat-safe').textContent=s;document.getElementById('stat-unhinged').textContent=p+'%';var t,d;if(p>=80){t="The Unhinged Headline";d="BREAKING: you are the Michael Scott of decision-making. every choice was chaos. your friends were contacted for comment. they declined.";}else if(p>=60){t="Controlled Chaos";d="SOURCES SAY: you're giving Chandler Bing — sarcastic, messy, somehow still functioning. authorities monitoring the situation.";}else if(p>=40){t="The Wildcard";d="REPORTS CONFIRM: Jake Peralta energy detected. fun, surprising, occasionally responsible. 'a lot but in a good way' say anonymous friends.";}else if(p>=20){t="The Strategist";d="ANALYSTS NOTE: Ron Swanson-level pragmatism. subject brought a pro/con list to an internet quiz. outlook: eternal but joyless.";}else{t="Safety First";d="IN A SHOCKING DISPLAY of caution, subject chose every safe option. Hermione Granger issued a statement: 'even I would have picked the duck.'";}document.getElementById('p-title').textContent=t;document.getElementById('p-desc').textContent=d;var l='';for(var i=0;i<answers.length;i++)l+='<div class="log-entry">'+(i+1)+'. <span>'+answers[i].chose+'</span><br>'+answers[i].tag+'</div>';document.getElementById('choices-log').innerHTML=l;}
+    function restart(){current=0;answers=[];chaoticCount=0;document.getElementById('game').style.display='block';document.getElementById('results').style.display='none';buildStars();showQuestion();}
+    buildStars();showQuestion();
+    </script>
+</body>
+</html>

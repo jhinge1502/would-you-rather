@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Would You Rather? — v17</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Space Grotesk',monospace,sans-serif;background:#080810;color:#d0d0d8;min-height:100vh;display:flex;justify-content:center;padding:48px 20px;}
+.container{width:100%;max-width:520px;}
+h1{font-size:1.5rem;font-weight:700;color:#00d4ff;letter-spacing:-0.5px;}
+.subtitle{font-size:0.78rem;color:#404058;margin-bottom:36px;margin-top:4px;}
+.progress{display:flex;gap:6px;margin-bottom:36px;}
+.prog-bar{flex:1;height:3px;background:#151520;border-radius:2px;overflow:hidden;transition:all 0.3s;}
+.prog-bar.done{background:#00d4ff;}
+.prog-bar.active{background:#00d4ff;opacity:0.5;}
+.q-number{font-size:0.68rem;font-weight:700;color:#00d4ff;text-transform:uppercase;letter-spacing:3px;margin-bottom:16px;}
+.q-text{font-size:0.82rem;color:#505068;margin-bottom:24px;}
+.option{display:block;width:100%;padding:20px 22px;margin-bottom:10px;background:#0c0c18;border:none;border-left:3px solid transparent;color:#c0c0cc;font-family:'Space Grotesk',monospace,sans-serif;font-size:0.95rem;font-weight:600;cursor:pointer;transition:all 0.2s;text-align:left;}
+.option:hover{border-left-color:#00d4ff;background:#10101f;color:#ffffff;padding-left:28px;}
+.option:active{transform:scale(0.99);}
+.or-text{font-size:0.65rem;color:#282838;text-transform:uppercase;letter-spacing:4px;margin:6px 0;padding-left:22px;}
+
+/* Results */
+#results{display:none;}
+.persona-label{font-size:0.65rem;color:#00d4ff;text-transform:uppercase;letter-spacing:4px;margin-bottom:8px;}
+.persona-title{font-size:2rem;font-weight:700;color:#ffffff;margin-bottom:8px;letter-spacing:-1px;}
+.persona-desc{font-size:0.88rem;color:#505068;margin-bottom:36px;line-height:1.6;}
+.stats{display:flex;gap:16px;margin-bottom:36px;}
+.stat{flex:1;padding:18px 0;border-top:2px solid #151520;text-align:center;}
+.stat-val{font-size:1.5rem;font-weight:700;color:#00d4ff;}
+.stat-label{font-size:0.6rem;color:#404058;text-transform:uppercase;letter-spacing:2px;margin-top:4px;}
+.divider{height:1px;background:#151520;margin-bottom:24px;}
+.log-title{font-size:0.6rem;color:#404058;text-transform:uppercase;letter-spacing:3px;margin-bottom:16px;}
+.log-item{padding:12px 0;border-bottom:1px solid #0e0e1a;font-size:0.82rem;line-height:1.5;}
+.log-item .num{color:#00d4ff;font-weight:700;margin-right:6px;}
+.log-item .tag{display:block;color:#353548;font-size:0.72rem;margin-top:2px;}
+.btn-again{display:inline-block;margin-top:32px;padding:14px 40px;background:transparent;border:2px solid #00d4ff;color:#00d4ff;font-family:'Space Grotesk',monospace,sans-serif;font-size:0.85rem;font-weight:700;cursor:pointer;transition:all 0.2s;letter-spacing:1px;}
+.btn-again:hover{background:#00d4ff;color:#080810;}
+</style>
+</head>
+<body>
+<div class="container">
+  <div id="game">
+    <h1>Would You Rather?</h1>
+    <p class="subtitle">10 dilemmas. No good answers.</p>
+    <div class="progress" id="progress"></div>
+    <p class="q-number" id="qNum"></p>
+    <p class="q-text">Would you rather…</p>
+    <button class="option" id="optA" onclick="pick('A')"></button>
+    <div class="or-text">or</div>
+    <button class="option" id="optB" onclick="pick('B')"></button>
+  </div>
+  <div id="results">
+    <p class="persona-label">Your Verdict</p>
+    <p class="persona-title" id="pTitle"></p>
+    <p class="persona-desc" id="pDesc"></p>
+    <div class="stats">
+      <div class="stat"><div class="stat-val" id="sChaotic"></div><div class="stat-label">Chaotic</div></div>
+      <div class="stat"><div class="stat-val" id="sSafe"></div><div class="stat-label">Safe</div></div>
+      <div class="stat"><div class="stat-val" id="sUnhinged"></div><div class="stat-label">Unhinged</div></div>
+    </div>
+    <div class="divider"></div>
+    <p class="log-title">Choice Log</p>
+    <div id="log"></div>
+    <button class="btn-again" onclick="restart()">Play Again</button>
+  </div>
+</div>
+<script>
+var questions=[{a:"Have Michael Scott as your boss for life",b:"Eat only gas station sushi forever",chaotic:"B",tagA:"Chose cringe management",tagB:"Chose food poisoning"},{a:"Fight 100 duck-sized horses",b:"Fight 1 horse-sized duck",chaotic:"B",tagA:"Swarm strategy",tagB:"Boss battle"},{a:"Dwight Schrute as your roommate",b:"Ross Geller as your therapist",chaotic:"A",tagA:"Bears. Beets. No boundaries.",tagB:"Three divorces per session"},{a:"Only speak in movie quotes",b:"Laugh track after everything",chaotic:"A",tagA:"Cinematic conversations",tagB:"Sitcom life unlocked"},{a:"8hrs elevator with Sheldon",b:"Gordon Ramsay roasts you live",chaotic:"B",tagA:"Physics lecture, no exit",tagB:"National humiliation"},{a:"Ron Swanson's mustache forever",b:"Kramer's hair forever",chaotic:"B",tagA:"Authority energy",tagB:"Slapstick life"},{a:"No phone for a year",b:"No shower for 3 months",chaotic:"B",tagA:"Disconnected but clean",tagB:"Connected but alone"},{a:"Passive-aggressive Morgan Freeman",b:"Wrong hype man",chaotic:"B",tagA:"Narrated disappointment",tagB:"Misplaced enthusiasm"},{a:"Live in The Office universe",b:"Live in Parks and Rec universe",chaotic:"A",tagA:"Scranton forever",tagB:"Pawnee forever"},{a:"GoT theme when you sit",b:"DUN DUN when you stand",chaotic:"A",tagA:"Cinematic seating",tagB:"Legal standing"}];
+var current=0,answers=[],chaoticCount=0;
+function buildProgress(){var p=document.getElementById('progress');p.innerHTML='';for(var i=0;i<questions.length;i++){var d=document.createElement('div');d.className='prog-bar'+(i<current?' done':'')+(i===current?' active':'');p.appendChild(d);}}
+function showQuestion(){var q=questions[current];document.getElementById('qNum').textContent='Q'+(current+1)+' / '+questions.length;document.getElementById('optA').textContent=q.a;document.getElementById('optB').textContent=q.b;buildProgress();}
+function pick(c){var q=questions[current],ch=c===q.chaotic;if(ch)chaoticCount++;answers.push({num:current+1,chose:c==='A'?q.a:q.b,tag:c==='A'?q.tagA:q.tagB});current++;if(current<questions.length)showQuestion();else showResults();}
+function showResults(){document.getElementById('game').style.display='none';document.getElementById('results').style.display='block';var pct=Math.round(chaoticCount/questions.length*100);var t,d;if(pct>=80){t='The Absolute Menace';d='Michael Scott energy, pure chaos, would fight the duck and ride it';}else if(pct>=60){t='Controlled Chaos';d='Chandler Bing coded, sarcastic, somehow functional';}else if(pct>=40){t='Balanced Wildcard';d='Jake Peralta energy, fun, occasionally responsible';}else if(pct>=20){t='The Strategist';d='Ron Swanson incarnate, practical, suspicious of joy';}else{t='Safety Manual';d='Hermione Granger energy, chose every safe option';}
+document.getElementById('pTitle').textContent=t;document.getElementById('pDesc').textContent=d;document.getElementById('sChaotic').textContent=chaoticCount;document.getElementById('sSafe').textContent=(questions.length-chaoticCount);document.getElementById('sUnhinged').textContent=pct+'%';var log=document.getElementById('log');log.innerHTML='';for(var i=0;i<answers.length;i++){var a=answers[i];log.innerHTML+='<div class="log-item"><span class="num">Q'+a.num+'</span>'+a.chose+'<span class="tag">'+a.tag+'</span></div>';}}
+function restart(){current=0;answers=[];chaoticCount=0;document.getElementById('game').style.display='block';document.getElementById('results').style.display='none';showQuestion();}
+showQuestion();
+</script>
+</body>
+</html>

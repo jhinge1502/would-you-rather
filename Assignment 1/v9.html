@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Would You Rather v9 - Terminal / Hacker</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: #0d1117; color: #c9d1d9;
+            min-height: 100vh; padding: 30px 20px;
+        }
+        .terminal {
+            max-width: 750px; margin: 0 auto;
+            background: #161b22; border: 1px solid #30363d; border-radius: 10px; overflow: hidden;
+        }
+        .term-bar {
+            background: #21262d; padding: 10px 16px; display: flex; align-items: center; gap: 8px;
+            border-bottom: 1px solid #30363d;
+        }
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .dot.r { background: #f85149; }
+        .dot.y { background: #d29922; }
+        .dot.g { background: #3fb950; }
+        .term-title { margin-left: 12px; font-size: 0.75rem; color: #8b949e; }
+        .term-body { padding: 24px; min-height: 500px; }
+        .line { margin-bottom: 6px; font-size: 0.85rem; line-height: 1.8; }
+        .prompt { color: #3fb950; }
+        .cmd { color: #79c0ff; }
+        .comment { color: #8b949e; }
+        .output { color: #c9d1d9; }
+        .highlight { color: #f0883e; }
+        .error { color: #f85149; }
+        .success { color: #3fb950; }
+        .yellow { color: #d29922; }
+
+        .option-line {
+            display: block; width: 100%; text-align: left;
+            background: transparent; border: 1px solid #30363d; border-radius: 6px;
+            padding: 12px 16px; margin: 6px 0;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;
+            color: #79c0ff; cursor: pointer; transition: all 0.2s; line-height: 1.6;
+        }
+        .option-line:hover { background: #21262d; border-color: #58a6ff; color: #fff; }
+
+        .prog-line { margin: 12px 0; }
+        .prog-bar-text { font-size: 0.75rem; color: #8b949e; }
+
+        .results { display: none; }
+        .restart-line {
+            display: inline-block; margin-top: 16px; padding: 8px 20px;
+            background: #21262d; border: 1px solid #3fb950; border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
+            color: #3fb950; cursor: pointer;
+        }
+        .restart-line:hover { background: #3fb950; color: #0d1117; }
+        .log-item { padding: 4px 0; font-size: 0.8rem; line-height: 1.8; }
+    </style>
+</head>
+<body>
+    <div class="terminal">
+        <div class="term-bar">
+            <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+            <span class="term-title">would-you-rather — bash — 80x24</span>
+        </div>
+        <div class="term-body">
+            <div id="game">
+                <div class="line"><span class="prompt">$</span> <span class="cmd">./would-you-rather --mode=chaos</span></div>
+                <div class="line"><span class="comment"># Loading dilemmas... 10 found. Judgment initialized.</span></div>
+                <div class="line"><span class="comment"># ======================================</span></div>
+                <div class="line prog-line" id="prog-line"><span class="prog-bar-text">[..........] 0/10</span></div>
+                <div class="line"><span class="highlight" id="q-num">QUESTION 1:</span> <span class="output">Would you rather...</span></div>
+                <div class="line">&nbsp;</div>
+                <button class="option-line" id="optA" onclick="pick('A')"></button>
+                <button class="option-line" id="optB" onclick="pick('B')"></button>
+            </div>
+            <div class="results" id="results">
+                <div class="line"><span class="prompt">$</span> <span class="cmd">./analyze-results</span></div>
+                <div class="line"><span class="comment"># Processing choices...</span></div>
+                <div class="line"><span class="success">✓ Analysis complete.</span></div>
+                <div class="line">&nbsp;</div>
+                <div class="line"><span class="highlight">VERDICT:</span> <span class="output" id="p-title"></span></div>
+                <div class="line"><span class="comment" id="p-desc"></span></div>
+                <div class="line">&nbsp;</div>
+                <div class="line"><span class="yellow">STATS:</span></div>
+                <div class="line">  chaotic_picks: <span class="error" id="stat-chaotic">0</span></div>
+                <div class="line">  safe_picks:    <span class="success" id="stat-safe">0</span></div>
+                <div class="line">  unhinged_pct:  <span class="highlight" id="stat-unhinged">0</span></div>
+                <div class="line">&nbsp;</div>
+                <div class="line"><span class="yellow">CHOICE LOG:</span></div>
+                <div id="choices-log"></div>
+                <div class="line">&nbsp;</div>
+                <button class="restart-line" onclick="restart()">$ ./play-again</button>
+            </div>
+        </div>
+    </div>
+    <script>
+    var questions=[
+        {a:"[A] Have Michael Scott as your boss for life",b:"[B] Eat only gas station sushi forever",chaotic:"B",tagA:"// chose corporate cringe over food poisoning",tagB:"// chose food poisoning over corporate cringe"},
+        {a:"[A] Fight 100 duck-sized horses",b:"[B] Fight 1 horse-sized duck",chaotic:"B",tagA:"// chose the swarm. bold strategy.",tagB:"// chose the boss fight. godspeed."},
+        {a:"[A] Dwight Schrute as your roommate",b:"[B] Ross Geller as your therapist",chaotic:"A",tagA:"// BEARS. BEETS. BATTLESTAR. DAILY.",tagB:"// we were on a break (every session)"},
+        {a:"[A] Only speak in movie quotes for a year",b:"[B] Laugh track after everything you say",chaotic:"A",tagA:"// \"I'll be back\" — you, leaving standup",tagB:"// *audience laughs at your breakup*"},
+        {a:"[A] Elevator with Sheldon Cooper, 8 hours",b:"[B] Gordon Ramsay roasts you on live TV",chaotic:"B",tagA:"// ERROR: fun.exe not found for 8 hours",tagB:"// THIS PERSON IS RAWWW"},
+        {a:"[A] Ron Swanson's mustache permanently",b:"[B] Kramer's hair permanently",chaotic:"B",tagA:"// mustache.authority = MAX",tagB:"// entrance_style = 'slapstick'"},
+        {a:"[A] No phone for a year",b:"[B] No shower for 3 months",chaotic:"B",tagA:"// connection_status: OFFLINE (365 days)",tagB:"// hygiene_level: CRITICAL"},
+        {a:"[A] Passive-aggressive Morgan Freeman narration",b:"[B] Hype man who's always wrong",chaotic:"B",tagA:"// narrator.tone = 'disappointed_parent'",tagB:"// hype_man.accuracy = 0.02"},
+        {a:"[A] Live in The Office universe",b:"[B] Live in Parks and Rec universe",chaotic:"A",tagA:"// location = 'Scranton' // why??",tagB:"// location = 'Pawnee' // waffles++"},
+        {a:"[A] GoT theme every time you sit",b:"[B] DUN DUN every time you stand",chaotic:"A",tagA:"// sit_event: play('game_of_thrones.mp3')",tagB:"// stand_event: play('law_and_order.wav')"}
+    ];
+    var current=0,answers=[],chaoticCount=0;
+    function updateProg(){var done='';for(var i=0;i<questions.length;i++)done+=i<current?'█':'·';document.getElementById('prog-line').innerHTML='<span class="prog-bar-text">['+done+'] '+current+'/'+questions.length+'</span>';}
+    function showQuestion(){var q=questions[current];document.getElementById('q-num').textContent='QUESTION '+(current+1)+':';document.getElementById('optA').textContent=q.a;document.getElementById('optB').textContent=q.b;updateProg();}
+    function pick(choice){var q=questions[current],c=choice===q.chaotic;if(c)chaoticCount++;answers.push({num:current+1,chose:choice==='A'?q.a.substring(4):q.b.substring(4),tag:choice==='A'?q.tagA:q.tagB});current++;if(current<questions.length)showQuestion();else showResults();}
+    function showResults(){document.getElementById('game').style.display='none';document.getElementById('results').style.display='block';var s=questions.length-chaoticCount,p=Math.round(chaoticCount/questions.length*100);document.getElementById('stat-chaotic').textContent=chaoticCount;document.getElementById('stat-safe').textContent=s;document.getElementById('stat-unhinged').textContent=p+'%';var t,d;if(p>=80){t="ABSOLUTE_MENACE";d="# michael_scott_energy.exe — every choice was chaos. your friends are concerned. your code has no error handling, just like your life.";}else if(p>=60){t="CONTROLLED_CHAOS";d="# chandler_bing.py — sarcastic, unpredictable, somehow still running in production. you flirt with danger but keep backups. usually.";}else if(p>=40){t="BALANCED_WILDCARD";d="# jake_peralta.js — fun, surprising, occasionally responsible. your commit messages say 'fixed stuff' and somehow it works.";}else if(p>=20){t="CALCULATED_PLAYER";d="# ron_swanson.rs — deliberate, typed, compiled. you read documentation for fun. your test coverage is 100%. you've never felt joy.";}else{t="SAFETY_MANUAL";d="# hermione_granger.hs — pure, functional, no side effects. you chose every safe option. sudo rm -rf fun/";}document.getElementById('p-title').textContent=t;document.getElementById('p-desc').textContent=d;var l='';for(var i=0;i<answers.length;i++)l+='<div class="log-item"><span class="cmd">'+answers[i].chose+'</span> <span class="comment">'+answers[i].tag+'</span></div>';document.getElementById('choices-log').innerHTML=l;}
+    function restart(){current=0;answers=[];chaoticCount=0;document.getElementById('game').style.display='block';document.getElementById('results').style.display='none';showQuestion();}
+    showQuestion();
+    </script>
+</body>
+</html>

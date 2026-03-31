@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Would You Rather? — v21 Final Direction Start</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:#0b0b0f;color:#e8e8ef;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+.container{width:100%;max-width:580px;}
+
+/* Progress pips */
+.pips{display:flex;justify-content:center;gap:6px;margin-bottom:40px;}
+.pip{width:28px;height:3px;border-radius:2px;background:rgba(255,255,255,0.06);transition:all 0.4s ease;}
+.pip.done{background:linear-gradient(90deg,#f7971e,#ffd200);}
+.pip.active{background:linear-gradient(90deg,#f7971e,#ffd200);box-shadow:0 0 10px rgba(247,151,30,0.3);}
+
+.card{background:rgba(255,255,255,0.03);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.06);border-radius:24px;padding:44px 36px;text-align:center;}
+h1{font-size:14px;font-weight:800;letter-spacing:3px;text-transform:uppercase;background:linear-gradient(135deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px;}
+.counter{font-size:12px;color:rgba(255,255,255,0.25);letter-spacing:1px;margin-bottom:28px;}
+.question{font-size:22px;font-weight:700;line-height:1.4;margin-bottom:40px;color:#f2f2f7;}
+.options{display:flex;flex-direction:column;gap:12px;}
+.opt-btn{background:rgba(255,255,255,0.035);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:18px 22px;font-family:'Inter',sans-serif;font-size:15px;font-weight:500;color:rgba(255,255,255,0.7);cursor:pointer;transition:all 0.3s ease;display:flex;align-items:center;gap:14px;text-align:left;}
+.opt-btn .badge{width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:rgba(255,255,255,0.35);flex-shrink:0;transition:all 0.3s ease;}
+.opt-btn .opt-text{flex:1;}
+.opt-btn:hover{background:rgba(255,255,255,0.07);border-color:rgba(200,130,220,0.3);color:#fff;transform:translateY(-2px);box-shadow:0 8px 32px rgba(200,130,220,0.1);}
+.opt-btn:hover .badge{background:linear-gradient(135deg,rgba(200,130,220,0.2),rgba(247,151,30,0.2));border-color:rgba(200,130,220,0.4);color:#fff;}
+.opt-btn:active{transform:translateY(0);}
+
+/* Results */
+.results-card{background:rgba(255,255,255,0.03);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.06);border-radius:24px;padding:44px 36px;text-align:center;}
+.personality-title{font-size:30px;font-weight:800;background:linear-gradient(135deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px;}
+.personality-desc{font-size:15px;color:rgba(255,255,255,0.45);line-height:1.7;margin-bottom:36px;max-width:420px;margin-left:auto;margin-right:auto;}
+.stats{display:flex;justify-content:center;gap:28px;margin-bottom:36px;}
+.stat{text-align:center;}
+.stat-val{font-size:28px;font-weight:800;background:linear-gradient(135deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.stat-label{font-size:11px;color:rgba(255,255,255,0.25);text-transform:uppercase;letter-spacing:1px;margin-top:4px;}
+.log{text-align:left;margin-bottom:36px;}
+.log-title{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,0.25);margin-bottom:14px;}
+.log-item{font-size:13px;color:rgba(255,255,255,0.4);padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;justify-content:space-between;gap:12px;}
+.log-chose{flex:1;}
+.log-tag{background:linear-gradient(135deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:600;font-size:12px;white-space:nowrap;}
+.play-again{background:linear-gradient(135deg,#f7971e,#ffd200);border:none;border-radius:14px;padding:14px 36px;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;color:#0b0b0f;cursor:pointer;transition:all 0.3s ease;}
+.play-again:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(247,151,30,0.25);}
+.hidden{display:none;}
+</style>
+</head>
+<body>
+<div class="container">
+<div id="quiz">
+<div class="pips" id="pips"></div>
+<div class="card">
+<h1>Would You Rather?</h1>
+<div class="counter" id="counter"></div>
+<div class="question" id="question"></div>
+<div class="options">
+<button class="opt-btn" id="btnA" onclick="pick('A')"><span class="badge">A</span><span class="opt-text" id="txtA"></span></button>
+<button class="opt-btn" id="btnB" onclick="pick('B')"><span class="badge">B</span><span class="opt-text" id="txtB"></span></button>
+</div>
+</div>
+</div>
+<div id="results" class="hidden">
+<div class="pips" id="pips2"></div>
+<div class="results-card">
+<div class="personality-title" id="rTitle"></div>
+<div class="personality-desc" id="rDesc"></div>
+<div class="stats" id="stats"></div>
+<div class="log" id="log"></div>
+<button class="play-again" onclick="restart()">Play Again</button>
+</div>
+</div>
+</div>
+<script>
+var questions=[{a:"Have Michael Scott as your boss for life",b:"Eat only gas station sushi forever",chaotic:"B",tagA:"Chose cringe management",tagB:"Chose food poisoning"},{a:"Fight 100 duck-sized horses",b:"Fight 1 horse-sized duck",chaotic:"B",tagA:"Swarm strategy",tagB:"Boss battle"},{a:"Dwight Schrute as your roommate",b:"Ross Geller as your therapist",chaotic:"A",tagA:"Bears. Beets. No boundaries.",tagB:"Three divorces per session"},{a:"Only speak in movie quotes",b:"Laugh track after everything",chaotic:"A",tagA:"Cinematic conversations",tagB:"Sitcom life unlocked"},{a:"8hrs elevator with Sheldon",b:"Gordon Ramsay roasts you live",chaotic:"B",tagA:"Physics lecture, no exit",tagB:"National humiliation"},{a:"Ron Swanson's mustache forever",b:"Kramer's hair forever",chaotic:"B",tagA:"Authority energy",tagB:"Slapstick life"},{a:"No phone for a year",b:"No shower for 3 months",chaotic:"B",tagA:"Disconnected but clean",tagB:"Connected but alone"},{a:"Passive-aggressive Morgan Freeman",b:"Wrong hype man",chaotic:"B",tagA:"Narrated disappointment",tagB:"Misplaced enthusiasm"},{a:"Live in The Office universe",b:"Live in Parks and Rec universe",chaotic:"A",tagA:"Scranton forever",tagB:"Pawnee forever"},{a:"GoT theme when you sit",b:"DUN DUN when you stand",chaotic:"A",tagA:"Cinematic seating",tagB:"Legal standing"}];
+var current=0,answers=[],chaoticCount=0;
+function buildPips(){var h='';for(var i=0;i<questions.length;i++)h+='<div class="pip" id="pip'+i+'"></div>';document.getElementById('pips').innerHTML=h;document.getElementById('pips2').innerHTML=h.replace(/id="pip/g,'id="pip2');}
+function updatePips(){for(var i=0;i<questions.length;i++){var p=document.getElementById('pip'+i);p.className='pip';if(i<current)p.className='pip done';else if(i===current)p.className='pip active';}}
+function showQuestion(){var q=questions[current];document.getElementById('counter').textContent='Question '+(current+1)+' of '+questions.length;document.getElementById('question').textContent=q.a+' or '+q.b+'?';document.getElementById('txtA').textContent=q.a;document.getElementById('txtB').textContent=q.b;updatePips();}
+function pick(c){var q=questions[current],ch=c===q.chaotic;if(ch)chaoticCount++;answers.push({num:current+1,chose:c==='A'?q.a:q.b,tag:c==='A'?q.tagA:q.tagB});current++;if(current<questions.length)showQuestion();else showResults();}
+function showResults(){document.getElementById('quiz').classList.add('hidden');document.getElementById('results').classList.remove('hidden');var pct=Math.round(chaoticCount/questions.length*100);var safe=100-pct;var unhinged=Math.min(100,Math.round(pct*1.2));var title,desc;if(pct>=80){title='The Absolute Menace';desc='Michael Scott energy. Pure chaos. You would fight the horse-sized duck and try to ride it home.';}else if(pct>=60){title='Controlled Chaos';desc='Chandler Bing coded. Sarcastic, questionable decisions, but somehow still functional.';}else if(pct>=40){title='Balanced Wildcard';desc='Jake Peralta energy. Fun, occasionally responsible, always entertaining.';}else if(pct>=20){title='The Strategist';desc='Ron Swanson incarnate. Practical, calculated, and deeply suspicious of joy.';}else{title='Safety Manual';desc='Hermione Granger energy. You chose every safe option. Your survival rate is impressive.';}document.getElementById('rTitle').textContent=title;document.getElementById('rDesc').textContent=desc;document.getElementById('stats').innerHTML='<div class="stat"><div class="stat-val">'+pct+'%</div><div class="stat-label">Chaotic</div></div><div class="stat"><div class="stat-val">'+safe+'%</div><div class="stat-label">Safe</div></div><div class="stat"><div class="stat-val">'+unhinged+'%</div><div class="stat-label">Unhinged</div></div>';var logHtml='<div class="log-title">Choice Log</div>';for(var i=0;i<answers.length;i++){logHtml+='<div class="log-item"><span class="log-chose">Q'+(answers[i].num)+': '+answers[i].chose+'</span><span class="log-tag">'+answers[i].tag+'</span></div>';}document.getElementById('log').innerHTML=logHtml;/* Fill all pips on results */for(var i=0;i<questions.length;i++){var p=document.getElementById('pip2'+i);if(p)p.className='pip done';}}
+function restart(){current=0;answers=[];chaoticCount=0;document.getElementById('results').classList.add('hidden');document.getElementById('quiz').classList.remove('hidden');showQuestion();}
+buildPips();showQuestion();
+</script>
+</body>
+</html>

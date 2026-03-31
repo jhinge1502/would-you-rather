@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Would You Rather v1 - Bold Cards</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a2e;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+        h1 { font-size: 3rem; color: #e94560; margin-bottom: 6px; }
+        .tagline { color: #aaa; font-size: 1rem; margin-bottom: 40px; }
+        .container { max-width: 700px; width: 100%; }
+        .progress-bar { height: 6px; background: #16213e; border-radius: 3px; margin-bottom: 30px; overflow: hidden; }
+        .progress-fill { height: 100%; background: #e94560; border-radius: 3px; transition: width 0.4s; width: 0%; }
+        .progress-text { text-align: center; font-size: 0.8rem; color: #555; margin-bottom: 16px; }
+        .question-card {
+            background: #16213e; border-radius: 20px; padding: 40px;
+            text-align: center; margin-bottom: 20px;
+        }
+        .question-num { font-size: 0.8rem; color: #e94560; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 14px; }
+        .question-text { font-size: 1.1rem; color: #aaa; margin-bottom: 30px; }
+        .vs { font-size: 1.5rem; font-weight: bold; color: #e94560; margin: 16px 0; }
+        .option-btn {
+            display: block; width: 100%; padding: 22px 24px;
+            background: #0f3460; border: 2px solid #333; border-radius: 14px;
+            color: #fff; font-size: 1.15rem; cursor: pointer;
+            transition: all 0.2s; text-align: center; line-height: 1.5;
+            font-family: Arial, sans-serif;
+        }
+        .option-btn:hover { border-color: #e94560; background: #1a3a6e; transform: scale(1.02); }
+        /* Results */
+        .results { display: none; }
+        .results h2 { font-size: 2rem; color: #e94560; text-align: center; margin-bottom: 8px; }
+        .results .subtitle { text-align: center; color: #aaa; margin-bottom: 30px; font-size: 1rem; }
+        .personality-card {
+            background: #16213e; border-radius: 20px; padding: 36px; text-align: center; margin-bottom: 20px;
+        }
+        .personality-title { font-size: 1.6rem; color: #ffd200; margin-bottom: 10px; }
+        .personality-desc { font-size: 1.05rem; color: #ccc; line-height: 1.7; }
+        .stat-row { display: flex; gap: 12px; margin-bottom: 12px; }
+        .stat-box {
+            flex: 1; background: #16213e; border-radius: 12px; padding: 20px; text-align: center;
+        }
+        .stat-num { font-size: 2rem; font-weight: bold; color: #e94560; }
+        .stat-label { font-size: 0.75rem; color: #666; margin-top: 4px; }
+        .choices-list { background: #16213e; border-radius: 16px; padding: 24px; margin-top: 16px; }
+        .choices-list h3 { color: #e94560; margin-bottom: 14px; font-size: 1rem; }
+        .choice-item { padding: 10px 0; border-bottom: 1px solid #0f3460; font-size: 0.9rem; color: #aaa; }
+        .choice-item:last-child { border-bottom: none; }
+        .choice-item span { color: #4fc3f7; }
+        .restart-btn {
+            display: block; width: 100%; padding: 16px; margin-top: 20px;
+            background: #e94560; color: #fff; border: none; border-radius: 12px;
+            font-size: 1.1rem; font-weight: bold; cursor: pointer;
+        }
+        .restart-btn:hover { background: #c0392b; }
+        .disclaimer { text-align: center; font-size: 0.7rem; color: #333; margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <h1>Would You Rather</h1>
+    <p class="tagline">10 impossible choices. 1 personality verdict. No take-backs.</p>
+
+    <div class="container">
+        <div id="game">
+            <div class="progress-text" id="prog-text">Question 1 of 10</div>
+            <div class="progress-bar"><div class="progress-fill" id="prog-fill"></div></div>
+            <div class="question-card">
+                <div class="question-num" id="q-num">Question 1</div>
+                <p class="question-text">Would you rather...</p>
+                <button class="option-btn" id="optA" onclick="pick('A')"></button>
+                <div class="vs">OR</div>
+                <button class="option-btn" id="optB" onclick="pick('B')"></button>
+            </div>
+        </div>
+
+        <div class="results" id="results">
+            <h2>Your Verdict</h2>
+            <p class="subtitle">Based on your deeply questionable choices...</p>
+            <div class="personality-card">
+                <div class="personality-title" id="p-title"></div>
+                <p class="personality-desc" id="p-desc"></p>
+            </div>
+            <div class="stat-row">
+                <div class="stat-box"><div class="stat-num" id="stat-chaotic">0</div><div class="stat-label">Chaotic Picks</div></div>
+                <div class="stat-box"><div class="stat-num" id="stat-safe">0</div><div class="stat-label">Safe Picks</div></div>
+                <div class="stat-box"><div class="stat-num" id="stat-unhinged">0</div><div class="stat-label">Unhinged %</div></div>
+            </div>
+            <div class="choices-list">
+                <h3>Your Choices</h3>
+                <div id="choices-log"></div>
+            </div>
+            <button class="restart-btn" onclick="restart()">Play Again</button>
+        </div>
+    </div>
+
+    <p class="disclaimer">This is not a real personality test. Or is it?</p>
+
+    <script>
+    var questions = [
+        {
+            a: "Have Michael Scott as your boss for the rest of your life",
+            b: "Eat only gas station sushi forever",
+            chaotic: "B", tagA: "You chose sanity... barely", tagB: "You chose chaos and food poisoning"
+        },
+        {
+            a: "Fight 100 duck-sized horses",
+            b: "Fight 1 horse-sized duck",
+            chaotic: "B", tagA: "You went for quantity over quality", tagB: "You chose the boss battle"
+        },
+        {
+            a: "Have Dwight Schrute as your roommate",
+            b: "Have Ross Geller as your therapist",
+            chaotic: "A", tagA: "Beet farm vibes forever", tagB: "You'll hear about the divorce. All three of them."
+        },
+        {
+            a: "Only communicate in movie quotes for a year",
+            b: "Have a laugh track play after everything you say",
+            chaotic: "A", tagA: "\"Here's looking at you, kid\" — you, ordering coffee", tagB: "Your funeral will have a laugh track"
+        },
+        {
+            a: "Be stuck in an elevator with Sheldon Cooper for 8 hours",
+            b: "Be roasted by Gordon Ramsay on live TV",
+            chaotic: "B", tagA: "Bazinga. For 8 hours. Straight.", tagB: "You absolute donkey. (His words, not ours.)"
+        },
+        {
+            a: "Have Ron Swanson's mustache permanently glued to your face",
+            b: "Have Kramer's hair permanently — can't cut it",
+            chaotic: "B", tagA: "You now command respect at hardware stores", tagB: "You slide into every room for the rest of your life"
+        },
+        {
+            a: "Give up your phone for a full year",
+            b: "Give up showering for 3 months",
+            chaotic: "B", tagA: "Bold. Brave. Disconnected.", tagB: "You will be alone. Very, very alone."
+        },
+        {
+            a: "Have your life narrated by Morgan Freeman but he's passive-aggressive",
+            b: "Have a personal hype man who's always slightly wrong about what you're doing",
+            chaotic: "B", tagA: "\"And then... he microwaved fish at work. Again.\"", tagB: "\"HE'S ABOUT TO CRUSH THIS PARKING JOB!\" (you just hit the curb)"
+        },
+        {
+            a: "Live in the world of The Office forever",
+            b: "Live in the world of Parks and Rec forever",
+            chaotic: "A", tagA: "You chose Scranton. Voluntarily. Wow.", tagB: "Pawnee: where the raccoons are the least of your problems"
+        },
+        {
+            a: "Every time you sit down, the Game of Thrones theme plays at full volume",
+            b: "Every time you stand up, the Law & Order 'dun dun' plays",
+            chaotic: "A", tagA: "Board meetings will never be the same", tagB: "DUN DUN. Every. Single. Time."
+        }
+    ];
+
+    var current = 0;
+    var answers = [];
+    var chaotic = 0;
+
+    function showQuestion() {
+        var q = questions[current];
+        document.getElementById('q-num').textContent = 'Question ' + (current + 1);
+        document.getElementById('prog-text').textContent = 'Question ' + (current + 1) + ' of ' + questions.length;
+        document.getElementById('prog-fill').style.width = (current / questions.length * 100) + '%';
+        document.getElementById('optA').textContent = q.a;
+        document.getElementById('optB').textContent = q.b;
+    }
+
+    function pick(choice) {
+        var q = questions[current];
+        var isChaotic = (choice === q.chaotic);
+        if (isChaotic) chaotic++;
+        answers.push({
+            num: current + 1,
+            chose: choice === 'A' ? q.a : q.b,
+            tag: choice === 'A' ? q.tagA : q.tagB,
+            chaotic: isChaotic
+        });
+        current++;
+        if (current < questions.length) {
+            showQuestion();
+        } else {
+            showResults();
+        }
+    }
+
+    function showResults() {
+        document.getElementById('game').style.display = 'none';
+        document.getElementById('results').style.display = 'block';
+        document.getElementById('prog-fill').style.width = '100%';
+
+        var safe = questions.length - chaotic;
+        var pct = Math.round(chaotic / questions.length * 100);
+        document.getElementById('stat-chaotic').textContent = chaotic;
+        document.getElementById('stat-safe').textContent = safe;
+        document.getElementById('stat-unhinged').textContent = pct + '%';
+
+        var title, desc;
+        if (pct >= 80) {
+            title = "The Absolute Menace";
+            desc = "You are the Michael Scott of decision-making. Every choice you make is a cry for help disguised as confidence. Chaotic, unhinged, and somehow still standing. You'd pick the horse-sized duck AND try to ride it. Your friends are concerned. Your enemies are impressed.";
+        } else if (pct >= 60) {
+            title = "The Controlled Chaos Agent";
+            desc = "You're basically Chandler Bing — sarcastic on the outside, questionable decisions on the inside. You flirt with chaos but occasionally remember you have a job and responsibilities. You'd survive a horror movie, but only because the killer would find you confusing.";
+        } else if (pct >= 40) {
+            title = "The Balanced Wildcard";
+            desc = "You're the Jake Peralta of this quiz — mostly fun, occasionally responsible, always surprising. You walk the line between 'that was genius' and 'why would you do that.' Your friends describe you as 'a lot, but in a good way.' Debatable.";
+        } else if (pct >= 20) {
+            title = "The Calculated Player";
+            desc = "You are the Ron Swanson of choices — deliberate, practical, and deeply suspicious of fun. You read the terms and conditions. You have a 5-year plan. You brought a spreadsheet to a party once. You're boring, but you'll outlive everyone.";
+        } else {
+            title = "The Human Safety Manual";
+            desc = "You are the most responsible person alive. Hermione Granger would call you 'a bit much.' You chose every safe option like your life depended on it — which it didn't, because this is a silly internet quiz. Loosen up. Live a little. Pick the horse-sized duck next time.";
+        }
+        document.getElementById('p-title').textContent = title;
+        document.getElementById('p-desc').textContent = desc;
+
+        var log = '';
+        for (var i = 0; i < answers.length; i++) {
+            log += '<div class="choice-item">Q' + answers[i].num + ': <span>' + answers[i].chose + '</span><br>' + answers[i].tag + '</div>';
+        }
+        document.getElementById('choices-log').innerHTML = log;
+    }
+
+    function restart() {
+        current = 0; answers = []; chaotic = 0;
+        document.getElementById('game').style.display = 'block';
+        document.getElementById('results').style.display = 'none';
+        showQuestion();
+    }
+
+    showQuestion();
+    </script>
+</body>
+</html>

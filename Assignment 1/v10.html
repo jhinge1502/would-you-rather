@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Would You Rather v10 - Y2K / Bubblegum</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: #fff5f9;
+            min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 40px 20px;
+            color: #333;
+        }
+        h1 {
+            font-size: 3rem; font-weight: 700; text-align: center;
+            color: #ff69b4; margin-bottom: 4px;
+            text-shadow: 3px 3px 0 #ffd1e8;
+        }
+        .tagline { font-size: 1rem; color: #c9a; margin-bottom: 36px; text-align: center; }
+        .container { max-width: 550px; width: 100%; }
+
+        .star-prog { display: flex; gap: 6px; justify-content: center; margin-bottom: 16px; }
+        .star { font-size: 1.4rem; color: #ffd1e8; transition: color 0.3s; }
+        .star.done { color: #ff69b4; }
+        .star.active { color: #ff1493; animation: bounce 0.6s infinite alternate; }
+        @keyframes bounce { from{transform:translateY(0)} to{transform:translateY(-4px)} }
+        .q-count { text-align: center; font-size: 0.8rem; color: #c9a; margin-bottom: 20px; }
+
+        .card {
+            background: #fff; border-radius: 30px; padding: 40px 30px;
+            box-shadow: 0 8px 40px rgba(255,105,180,0.15);
+            border: 3px solid #ffd1e8; text-align: center;
+        }
+        .wyr-text { font-size: 1rem; color: #c9a; margin-bottom: 24px; }
+        .opt-btn {
+            display: block; width: 100%; padding: 20px; margin: 8px 0;
+            border-radius: 20px; border: 3px solid;
+            font-family: 'Fredoka', sans-serif; font-size: 1.05rem; font-weight: 600;
+            cursor: pointer; transition: all 0.2s; line-height: 1.5; color: #fff;
+        }
+        .opt-btn:nth-of-type(1) {
+            background: linear-gradient(135deg, #ff69b4, #ff1493);
+            border-color: #ff1493;
+        }
+        .opt-btn:nth-of-type(1):hover { transform: scale(1.04) rotate(-1deg); box-shadow: 0 6px 20px rgba(255,20,147,0.3); }
+        .opt-btn:nth-of-type(2) {
+            background: linear-gradient(135deg, #87ceeb, #4fc3f7);
+            border-color: #4fc3f7;
+        }
+        .opt-btn:nth-of-type(2):hover { transform: scale(1.04) rotate(1deg); box-shadow: 0 6px 20px rgba(79,195,247,0.3); }
+        .vs-bubble {
+            width: 50px; height: 50px; border-radius: 50%;
+            background: #ffd1e8; color: #ff69b4;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.9rem; margin: 10px auto;
+        }
+
+        .results { display: none; }
+        .results h2 { font-size: 2.2rem; text-align: center; color: #ff69b4; margin-bottom: 4px; }
+        .results .sub { text-align: center; color: #c9a; margin-bottom: 24px; font-size: 0.9rem; }
+        .verdict-bubble {
+            background: linear-gradient(135deg, #ff69b4, #ff1493, #c471ed);
+            border-radius: 30px; padding: 36px; text-align: center; color: #fff; margin-bottom: 20px;
+        }
+        .verdict-title { font-size: 1.6rem; font-weight: 700; margin-bottom: 8px; }
+        .verdict-desc { font-size: 0.95rem; line-height: 1.7; opacity: 0.95; }
+        .stats-cute { display: flex; gap: 10px; margin-bottom: 16px; }
+        .stat-bubble {
+            flex: 1; background: #fff; border: 3px solid #ffd1e8;
+            border-radius: 20px; padding: 18px; text-align: center;
+        }
+        .stat-bubble .num { font-size: 2rem; font-weight: 700; color: #ff69b4; }
+        .stat-bubble .lbl { font-size: 0.7rem; color: #c9a; }
+        .log-cute { background: #fff; border: 3px solid #ffd1e8; border-radius: 24px; padding: 24px; }
+        .log-cute h3 { font-size: 0.9rem; color: #ff69b4; margin-bottom: 12px; }
+        .log-entry { padding: 8px 0; border-bottom: 2px dashed #ffd1e8; font-size: 0.85rem; color: #888; line-height: 1.6; }
+        .log-entry:last-child { border-bottom: none; }
+        .log-entry span { color: #ff1493; font-weight: 600; }
+        .restart-btn {
+            display: block; width: 100%; padding: 16px; margin-top: 20px;
+            border-radius: 50px; border: 3px solid #ff69b4;
+            background: #fff; color: #ff69b4;
+            font-family: 'Fredoka', sans-serif; font-size: 1.1rem; font-weight: 700; cursor: pointer;
+        }
+        .restart-btn:hover { background: #ff69b4; color: #fff; }
+        .disclaimer { text-align: center; font-size: 0.7rem; color: #dbb; margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <h1>Would You Rather</h1>
+    <p class="tagline">pick your fate bestie, no take-backs</p>
+    <div class="container">
+        <div id="game">
+            <div class="star-prog" id="star-prog"></div>
+            <div class="q-count" id="q-count">1 of 10</div>
+            <div class="card">
+                <div class="wyr-text">would you rather...</div>
+                <button class="opt-btn" id="optA" onclick="pick('A')"></button>
+                <div class="vs-bubble">or</div>
+                <button class="opt-btn" id="optB" onclick="pick('B')"></button>
+            </div>
+        </div>
+        <div class="results" id="results">
+            <h2>omg the results</h2>
+            <p class="sub">we did the math on your choices bestie...</p>
+            <div class="verdict-bubble">
+                <div class="verdict-title" id="p-title"></div>
+                <p class="verdict-desc" id="p-desc"></p>
+            </div>
+            <div class="stats-cute">
+                <div class="stat-bubble"><div class="num" id="stat-chaotic">0</div><div class="lbl">chaotic</div></div>
+                <div class="stat-bubble"><div class="num" id="stat-safe">0</div><div class="lbl">safe</div></div>
+                <div class="stat-bubble"><div class="num" id="stat-unhinged">0</div><div class="lbl">unhinged</div></div>
+            </div>
+            <div class="log-cute">
+                <h3>your choices tho</h3>
+                <div id="choices-log"></div>
+            </div>
+            <button class="restart-btn" onclick="restart()">do it again!!!</button>
+        </div>
+    </div>
+    <p class="disclaimer">not a real personality test but honestly more accurate than most</p>
+    <script>
+    var questions=[
+        {a:"Have Michael Scott as your boss for life",b:"Eat only gas station sushi forever",chaotic:"B",tagA:"at least he tries lol",tagB:"rip your stomach fr fr"},
+        {a:"Fight 100 duck-sized horses",b:"Fight 1 horse-sized duck",chaotic:"B",tagA:"tiny hooves, big problems",tagB:"one giant duck. you're so brave bestie"},
+        {a:"Dwight Schrute as your roommate",b:"Ross Geller as your therapist",chaotic:"A",tagA:"beets and bears 24/7 slay",tagB:"he WILL mention the divorces"},
+        {a:"Only speak in movie quotes for a year",b:"Laugh track after everything you say",chaotic:"A",tagA:"\"fetch\" is never gonna happen but you'll try",tagB:"even your crying gets a laugh track oop"},
+        {a:"Elevator with Sheldon Cooper, 8 hours",b:"Gordon Ramsay roasts you on live TV",chaotic:"B",tagA:"bazinga for 8 hours straight no thank u",tagB:"YOU DONUT — on national television"},
+        {a:"Ron Swanson's mustache permanently",b:"Kramer's hair permanently",chaotic:"B",tagA:"instant dad energy unlocked",tagB:"main character entrance every time"},
+        {a:"No phone for a year",b:"No shower for 3 months",chaotic:"B",tagA:"digital detox era",tagB:"the smell era nobody asked for"},
+        {a:"Passive-aggressive Morgan Freeman narration",b:"Hype man who's always wrong",chaotic:"B",tagA:"\"and then they ordered uber eats. again.\"",tagB:"\"THEY'RE GONNA ACE THIS\" (it's a parking ticket)"},
+        {a:"Live in The Office universe",b:"Live in Parks and Rec universe",chaotic:"A",tagA:"scranton arc activated",tagB:"pawnee era, living for it"},
+        {a:"GoT theme every time you sit",b:"DUN DUN every time you stand",chaotic:"A",tagA:"sitting down has never been more iconic",tagB:"standing ovation? more like standing prosecution"}
+    ];
+    var current=0,answers=[],chaoticCount=0;
+    function buildStars(){var h='';for(var i=0;i<questions.length;i++)h+='<div class="star" id="s'+i+'">★</div>';document.getElementById('star-prog').innerHTML=h;}
+    function updateStars(){for(var i=0;i<questions.length;i++){var s=document.getElementById('s'+i);s.className='star';if(i<current)s.classList.add('done');if(i===current)s.classList.add('active');}}
+    function showQuestion(){var q=questions[current];document.getElementById('q-count').textContent=(current+1)+' of '+questions.length;document.getElementById('optA').textContent=q.a;document.getElementById('optB').textContent=q.b;updateStars();}
+    function pick(choice){var q=questions[current],c=choice===q.chaotic;if(c)chaoticCount++;answers.push({num:current+1,chose:choice==='A'?q.a:q.b,tag:choice==='A'?q.tagA:q.tagB});current++;if(current<questions.length)showQuestion();else showResults();}
+    function showResults(){document.getElementById('game').style.display='none';document.getElementById('results').style.display='block';var s=questions.length-chaoticCount,p=Math.round(chaoticCount/questions.length*100);document.getElementById('stat-chaotic').textContent=chaoticCount;document.getElementById('stat-safe').textContent=s;document.getElementById('stat-unhinged').textContent=p+'%';var t,d;if(p>=80){t="the unhinged bestie";d="you're giving michael scott at the dundies. every choice was pure chaos and honestly? iconic. your friends are scared but entertained. you'd fight the duck AND try to adopt it.";}else if(p>=60){t="controlled chaos queen";d="chandler bing energy fr — sarcastic, chaotic, but somehow still functioning. you're the friend everyone calls when things go wrong because you've been there.";}else if(p>=40){t="the balanced babe";d="jake peralta coded. fun, surprising, occasionally responsible. 'a lot but in a good way' — what your friends say behind your back. lovingly. mostly.";}else if(p>=20){t="the calculated one";d="giving ron swanson. deliberate, practical, suspicious of anything fun. you probably made a spreadsheet for this quiz. you'll outlive everyone tho so.";}else{t="the safety queen";d="hermione granger could never. you chose every safe option like it was a final exam. babe it's a silly internet quiz. pick the duck next time. live a little plz.";}document.getElementById('p-title').textContent=t;document.getElementById('p-desc').textContent=d;var l='';for(var i=0;i<answers.length;i++)l+='<div class="log-entry">'+(i+1)+'. <span>'+answers[i].chose+'</span><br>'+answers[i].tag+'</div>';document.getElementById('choices-log').innerHTML=l;}
+    function restart(){current=0;answers=[];chaoticCount=0;document.getElementById('game').style.display='block';document.getElementById('results').style.display='none';buildStars();showQuestion();}
+    buildStars();showQuestion();
+    </script>
+</body>
+</html>

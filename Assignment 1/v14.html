@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Would You Rather v14 - Dark Minimal + Bold Type</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&family=Bebas+Neue&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Space Grotesk', sans-serif; background: #0a0a0a; color: #fff;
+            min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+            justify-content: center; padding: 40px 20px;
+        }
+        h1 { font-family: 'Bebas Neue', sans-serif; font-size: 4rem; letter-spacing: 8px; color: #fff; margin-bottom: 4px; }
+        .tagline { font-size: 0.85rem; color: #444; margin-bottom: 50px; letter-spacing: 2px; }
+        .container { max-width: 620px; width: 100%; }
+        .prog-strip { display: flex; gap: 4px; margin-bottom: 24px; }
+        .prog-seg { flex: 1; height: 3px; background: #1a1a1a; border-radius: 2px; transition: background 0.3s; }
+        .prog-seg.done { background: #fff; }
+        .prog-seg.active { background: #e94560; box-shadow: 0 0 8px #e94560; }
+        .q-count { font-size: 0.7rem; color: #333; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 30px; text-align: center; }
+
+        .question-area { text-align: center; }
+        .big-q {
+            font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem;
+            letter-spacing: 6px; color: #e94560; margin-bottom: 40px;
+        }
+        .opt-btn {
+            display: block; width: 100%; padding: 28px 24px; margin: 12px 0;
+            background: transparent; border: 1px solid #222; border-radius: 12px;
+            color: #888; font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.15rem; font-weight: 700; cursor: pointer;
+            transition: all 0.3s; text-align: left; line-height: 1.5;
+        }
+        .opt-btn:hover { border-color: #e94560; color: #fff; background: #111; padding-left: 32px; }
+        .opt-btn .opt-letter {
+            display: inline-block; width: 32px; height: 32px; border-radius: 8px;
+            background: #1a1a1a; text-align: center; line-height: 32px;
+            font-size: 0.8rem; color: #444; margin-right: 14px; vertical-align: middle;
+        }
+        .opt-btn:hover .opt-letter { background: #e94560; color: #fff; }
+        .vs-line { text-align: center; font-size: 0.7rem; color: #333; letter-spacing: 6px; margin: 4px 0; }
+
+        .results { display: none; }
+        .results h2 { font-family: 'Bebas Neue', sans-serif; font-size: 3rem; text-align: center; letter-spacing: 6px; margin-bottom: 4px; }
+        .results .sub { text-align: center; color: #333; margin-bottom: 30px; font-size: 0.8rem; }
+        .verdict-box {
+            border: 1px solid #e94560; border-radius: 16px; padding: 36px; text-align: center; margin-bottom: 20px;
+        }
+        .verdict-title { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; color: #e94560; letter-spacing: 4px; margin-bottom: 10px; }
+        .verdict-desc { font-size: 1rem; color: #888; line-height: 1.7; }
+        .stat-row { display: flex; gap: 12px; margin-bottom: 20px; }
+        .stat-item { flex: 1; text-align: center; padding: 20px; background: #111; border-radius: 12px; }
+        .stat-item .num { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; color: #e94560; }
+        .stat-item .lbl { font-size: 0.65rem; color: #444; letter-spacing: 2px; text-transform: uppercase; }
+        .log-area { padding: 20px; background: #111; border-radius: 14px; }
+        .log-area h3 { font-size: 0.75rem; color: #444; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 12px; }
+        .log-item { padding: 10px 0; border-bottom: 1px solid #1a1a1a; font-size: 0.85rem; color: #666; line-height: 1.5; }
+        .log-item:last-child { border-bottom: none; }
+        .log-item span { color: #e94560; font-weight: 700; }
+        .restart-btn {
+            display: block; width: 100%; padding: 18px; margin-top: 20px;
+            background: transparent; border: 1px solid #e94560; border-radius: 12px;
+            color: #e94560; font-family: 'Space Grotesk', sans-serif;
+            font-size: 1rem; font-weight: 700; cursor: pointer; letter-spacing: 2px;
+        }
+        .restart-btn:hover { background: #e94560; color: #fff; }
+    </style>
+</head>
+<body>
+    <h1>WYR</h1>
+    <p class="tagline">10 dilemmas. total judgment.</p>
+    <div class="container">
+        <div id="game">
+            <div class="prog-strip" id="prog-strip"></div>
+            <div class="q-count" id="q-count">01 / 10</div>
+            <div class="question-area">
+                <div class="big-q">WOULD YOU RATHER</div>
+                <button class="opt-btn" id="optA" onclick="pick('A')"><span class="opt-letter">A</span><span id="txtA"></span></button>
+                <div class="vs-line">OR</div>
+                <button class="opt-btn" id="optB" onclick="pick('B')"><span class="opt-letter">B</span><span id="txtB"></span></button>
+            </div>
+        </div>
+        <div class="results" id="results">
+            <h2>VERDICT</h2>
+            <p class="sub">your choices have been weighed</p>
+            <div class="verdict-box"><div class="verdict-title" id="p-title"></div><p class="verdict-desc" id="p-desc"></p></div>
+            <div class="stat-row">
+                <div class="stat-item"><div class="num" id="stat-chaotic">0</div><div class="lbl">Chaotic</div></div>
+                <div class="stat-item"><div class="num" id="stat-safe">0</div><div class="lbl">Safe</div></div>
+                <div class="stat-item"><div class="num" id="stat-unhinged">0</div><div class="lbl">Unhinged</div></div>
+            </div>
+            <div class="log-area"><h3>Choices</h3><div id="choices-log"></div></div>
+            <button class="restart-btn" onclick="restart()">PLAY AGAIN</button>
+        </div>
+    </div>
+    <script>
+    var questions=[{a:"Have Michael Scott as your boss for life",b:"Eat only gas station sushi forever",chaotic:"B",tagA:"Cringe management accepted",tagB:"Stomach: betrayed"},{a:"Fight 100 duck-sized horses",b:"Fight 1 horse-sized duck",chaotic:"B",tagA:"Swarm strategy",tagB:"Boss battle"},{a:"Dwight Schrute as your roommate",b:"Ross Geller as your therapist",chaotic:"A",tagA:"Bears. Beets. No boundaries.",tagB:"Three divorces. Every session."},{a:"Only speak in movie quotes for a year",b:"Laugh track after everything you say",chaotic:"A",tagA:"Cinematic communication",tagB:"Your life becomes a sitcom"},{a:"Elevator with Sheldon Cooper, 8 hours",b:"Gordon Ramsay roasts you on live TV",chaotic:"B",tagA:"Eight hours. No escape.",tagB:"Nationally televised destruction"},{a:"Ron Swanson's mustache permanently",b:"Kramer's hair permanently",chaotic:"B",tagA:"Authority unlocked",tagB:"Physical comedy forever"},{a:"No phone for a year",b:"No shower for 3 months",chaotic:"B",tagA:"Disconnected. Brave.",tagB:"Alone. By necessity."},{a:"Passive-aggressive Morgan Freeman narration",b:"Hype man who's always wrong",chaotic:"B",tagA:"Narrated disappointment",tagB:"Misplaced enthusiasm"},{a:"Live in The Office universe",b:"Live in Parks and Rec universe",chaotic:"A",tagA:"Scranton. Voluntarily.",tagB:"Pawnee. Waffles."},{a:"GoT theme every time you sit",b:"DUN DUN every time you stand",chaotic:"A",tagA:"Cinematic seating",tagB:"Prosecutorial standing"}];
+    var current=0,answers=[],chaoticCount=0;
+    function buildStrip(){var h='';for(var i=0;i<questions.length;i++)h+='<div class="prog-seg" id="ps'+i+'"></div>';document.getElementById('prog-strip').innerHTML=h;}
+    function updateStrip(){for(var i=0;i<questions.length;i++){var s=document.getElementById('ps'+i);s.className='prog-seg';if(i<current)s.classList.add('done');if(i===current)s.classList.add('active');}}
+    function showQuestion(){var q=questions[current];document.getElementById('q-count').textContent=(current+1<10?'0':'')+(current+1)+' / '+questions.length;document.getElementById('txtA').textContent=q.a;document.getElementById('txtB').textContent=q.b;updateStrip();}
+    function pick(c){var q=questions[current],ch=c===q.chaotic;if(ch)chaoticCount++;answers.push({num:current+1,chose:c==='A'?q.a:q.b,tag:c==='A'?q.tagA:q.tagB});current++;if(current<questions.length)showQuestion();else showResults();}
+    function showResults(){document.getElementById('game').style.display='none';document.getElementById('results').style.display='block';var s=questions.length-chaoticCount,p=Math.round(chaoticCount/questions.length*100);document.getElementById('stat-chaotic').textContent=chaoticCount;document.getElementById('stat-safe').textContent=s;document.getElementById('stat-unhinged').textContent=p+'%';var t,d;if(p>=80){t="THE MENACE";d="Michael Scott energy. Pure chaos. Every choice was unhinged. You'd fight the duck and try to ride it. Your friends are impressed and terrified.";}else if(p>=60){t="CHAOS AGENT";d="Chandler Bing coded. Sarcastic exterior, questionable interior. You dance with danger but remember to pay rent.";}else if(p>=40){t="WILDCARD";d="Jake Peralta vibes. Fun, surprising, occasionally responsible. 'A lot but in a good way.' Debatable.";}else if(p>=20){t="STRATEGIST";d="Ron Swanson incarnate. Deliberate, practical, suspicious of joy. You optimized this quiz. That says it all.";}else{t="SAFETY FIRST";d="Hermione Granger energy. Every safe option. This quiz was a threat to you. Pick the duck next time.";}document.getElementById('p-title').textContent=t;document.getElementById('p-desc').textContent=d;var l='';for(var i=0;i<answers.length;i++)l+='<div class="log-item">'+(i+1)+'. <span>'+answers[i].chose+'</span> — '+answers[i].tag+'</div>';document.getElementById('choices-log').innerHTML=l;}
+    function restart(){current=0;answers=[];chaoticCount=0;document.getElementById('game').style.display='block';document.getElementById('results').style.display='none';buildStrip();showQuestion();}
+    buildStrip();showQuestion();
+    </script>
+</body>
+</html>

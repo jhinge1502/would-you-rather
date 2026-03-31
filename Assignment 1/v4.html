@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Would You Rather v4 - Brutalist</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Courier New', monospace;
+            background: #fff; color: #000;
+            min-height: 100vh;
+        }
+        .banner {
+            background: #ff3300; color: #fff; padding: 50px 20px;
+            text-align: center; border-bottom: 8px solid #000;
+        }
+        .banner h1 { font-size: 3.5rem; text-transform: uppercase; letter-spacing: 8px; }
+        .banner p { font-size: 0.85rem; margin-top: 10px; text-transform: uppercase; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .progress-bar { height: 14px; border: 4px solid #000; }
+        .progress-fill { height: 100%; background: #ff3300; transition: width 0.4s; }
+        .progress-text { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 3px; padding: 8px 0; text-align: center; color: #666; }
+        .question-card { border: 4px solid #000; }
+        .question-num {
+            background: #000; color: #fff; padding: 12px 20px;
+            font-size: 0.9rem; text-transform: uppercase; letter-spacing: 4px;
+        }
+        .question-body { padding: 0; }
+        .question-text { text-align: center; padding: 16px; font-size: 0.8rem; color: #666; text-transform: uppercase; border-bottom: 4px solid #000; }
+        .options-split { display: flex; }
+        .option-btn {
+            flex: 1; padding: 30px 20px; border: none; background: #fff;
+            font-family: 'Courier New', monospace; font-size: 1.1rem; font-weight: bold;
+            cursor: pointer; transition: all 0.15s; line-height: 1.6; text-align: center;
+        }
+        .option-btn:first-child { border-right: 4px solid #000; }
+        .option-btn:hover { background: #000; color: #ff3300; }
+        .vs-bar {
+            position: relative; display: flex; align-items: center; justify-content: center;
+        }
+        .vs-text {
+            background: #ff3300; color: #fff; font-weight: bold; font-size: 1.2rem;
+            padding: 6px 16px; text-align: center; border-bottom: 4px solid #000;
+        }
+        /* Results */
+        .results { display: none; }
+        .results-header { background: #000; color: #ff3300; padding: 30px; text-align: center; border: 4px solid #000; }
+        .results-header h2 { font-size: 2rem; text-transform: uppercase; letter-spacing: 6px; }
+        .results-header p { font-size: 0.7rem; color: #aaa; margin-top: 6px; text-transform: uppercase; }
+        .personality-block { border: 4px solid #000; border-top: none; padding: 30px; background: #ffe600; }
+        .personality-title { font-size: 1.5rem; font-weight: bold; text-transform: uppercase; margin-bottom: 10px; }
+        .personality-desc { font-size: 0.95rem; line-height: 1.7; }
+        .stat-row { display: flex; border: 4px solid #000; border-top: none; }
+        .stat-box { flex: 1; padding: 20px; text-align: center; border-right: 4px solid #000; }
+        .stat-box:last-child { border-right: none; }
+        .stat-num { font-size: 2.2rem; font-weight: bold; color: #ff3300; }
+        .stat-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; margin-top: 4px; color: #666; }
+        .choices-list { border: 4px solid #000; border-top: none; padding: 20px; }
+        .choices-list h3 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 12px; }
+        .choice-item { padding: 10px 0; border-bottom: 2px solid #eee; font-size: 0.85rem; line-height: 1.6; }
+        .choice-item:last-child { border-bottom: none; }
+        .choice-item span { color: #ff3300; font-weight: bold; }
+        .restart-btn {
+            display: block; width: 100%; padding: 18px; background: #000; color: #ff3300;
+            border: 4px solid #000; font-family: 'Courier New', monospace;
+            font-size: 1.2rem; font-weight: bold; text-transform: uppercase;
+            letter-spacing: 4px; cursor: pointer; border-top: none;
+        }
+        .restart-btn:hover { background: #ff3300; color: #fff; }
+        .footer-brutal { background: #ff3300; color: #fff; text-align: center; padding: 14px; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 3px; }
+    </style>
+</head>
+<body>
+    <div class="banner">
+        <h1>WOULD YOU RATHER</h1>
+        <p>10 Questions. No Good Answers. Total Judgment.</p>
+    </div>
+    <div class="container">
+        <div id="game">
+            <div class="progress-text" id="prog-text">QUESTION 01 OF 10</div>
+            <div class="progress-bar"><div class="progress-fill" id="prog-fill"></div></div>
+            <div class="question-card">
+                <div class="question-num" id="q-num">QUESTION 01</div>
+                <div class="question-body">
+                    <div class="question-text">WOULD YOU RATHER...</div>
+                    <div class="vs-text">CHOOSE YOUR FATE</div>
+                    <div class="options-split">
+                        <button class="option-btn" id="optA" onclick="pick('A')"></button>
+                        <button class="option-btn" id="optB" onclick="pick('B')"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="results" id="results">
+            <div class="results-header"><h2>VERDICT</h2><p>Your choices have been judged</p></div>
+            <div class="personality-block">
+                <div class="personality-title" id="p-title"></div>
+                <p class="personality-desc" id="p-desc"></p>
+            </div>
+            <div class="stat-row">
+                <div class="stat-box"><div class="stat-num" id="stat-chaotic">0</div><div class="stat-label">Chaotic</div></div>
+                <div class="stat-box"><div class="stat-num" id="stat-safe">0</div><div class="stat-label">Safe</div></div>
+                <div class="stat-box"><div class="stat-num" id="stat-unhinged">0</div><div class="stat-label">Unhinged %</div></div>
+            </div>
+            <div class="choices-list">
+                <h3>Your Record</h3>
+                <div id="choices-log"></div>
+            </div>
+            <button class="restart-btn" onclick="restart()">>>> GO AGAIN <<<</button>
+        </div>
+    </div>
+    <p class="footer-brutal">SIDE EFFECTS: EXISTENTIAL DREAD, SELF-AWARENESS</p>
+    <script>
+    var questions = [
+        { a:"Have Michael Scott as your boss for life", b:"Eat only gas station sushi forever", chaotic:"B", tagA:"Cringe management it is", tagB:"Your colon filed a complaint" },
+        { a:"Fight 100 duck-sized horses", b:"Fight 1 horse-sized duck", chaotic:"B", tagA:"Death by a thousand tiny hooves", tagB:"One giant quack. Godspeed." },
+        { a:"Dwight Schrute as your roommate", b:"Ross Geller as your therapist", chaotic:"A", tagA:"IDENTITY THEFT IS NOT A JOKE, JIM", tagB:"Pivot. PIVOT. PIVOOOT." },
+        { a:"Only speak in movie quotes for a year", b:"Laugh track after everything you say", chaotic:"A", tagA:"\"You talking to me?\" — you, at the DMV", tagB:"*audience laughs at your tax return*" },
+        { a:"Elevator with Sheldon Cooper, 8 hours", b:"Gordon Ramsay roasts you on live TV", chaotic:"B", tagA:"Fun fact #847. You can't escape.", tagB:"THIS OUTFIT IS BLOODY RAW" },
+        { a:"Ron Swanson's mustache permanently", b:"Kramer's hair permanently", chaotic:"B", tagA:"Peak masculinity. No debate.", tagB:"*slides into every room forever*" },
+        { a:"No phone for a year", b:"No shower for 3 months", chaotic:"B", tagA:"Welcome to 1995. Population: you.", tagB:"Everyone within 10 feet has left the chat." },
+        { a:"Morgan Freeman narrates you (passive-aggressive)", b:"Hype man follows you (always wrong)", chaotic:"B", tagA:"\"He burned the toast. Predictable.\"", tagB:"\"HE'S CRUSHING THIS ZOOM CALL!\" (you're on mute)" },
+        { a:"Live in The Office universe", b:"Live in Parks and Rec universe", chaotic:"A", tagA:"Dunder Mifflin: where dreams go to die slowly", tagB:"At least Pawnee has Lil Sebastian" },
+        { a:"GoT theme when you sit", b:"Law & Order DUN DUN when you stand", chaotic:"A", tagA:"Every toilet visit is an EVENT", tagB:"Standing up in church: DUN DUN" }
+    ];
+    var current=0,answers=[],chaoticCount=0;
+    function showQuestion(){var q=questions[current];document.getElementById('q-num').textContent='QUESTION '+(current+1<10?'0':'')+(current+1);document.getElementById('prog-text').textContent='QUESTION '+(current+1<10?'0':'')+(current+1)+' OF '+questions.length;document.getElementById('prog-fill').style.width=(current/questions.length*100)+'%';document.getElementById('optA').textContent=q.a;document.getElementById('optB').textContent=q.b;}
+    function pick(choice){var q=questions[current],c=choice===q.chaotic;if(c)chaoticCount++;answers.push({num:current+1,chose:choice==='A'?q.a:q.b,tag:choice==='A'?q.tagA:q.tagB});current++;if(current<questions.length)showQuestion();else showResults();}
+    function showResults(){document.getElementById('game').style.display='none';document.getElementById('results').style.display='block';var s=questions.length-chaoticCount,p=Math.round(chaoticCount/questions.length*100);document.getElementById('stat-chaotic').textContent=chaoticCount;document.getElementById('stat-safe').textContent=s;document.getElementById('stat-unhinged').textContent=p+'%';var t,d;if(p>=80){t="THE ABSOLUTE MENACE";d="Michael Scott energy. Every choice was a cry for help wrapped in confidence. You'd pick the horse-sized duck AND try to ride it. Your enemies are impressed.";}else if(p>=60){t="CONTROLLED CHAOS";d="Chandler Bing — sarcastic outside, questionable inside. You flirt with chaos but occasionally act responsible. You'd survive a horror movie because the killer is confused by you.";}else if(p>=40){t="BALANCED WILDCARD";d="Jake Peralta energy. Mostly fun, sometimes responsible. Your friends say 'a lot but in a good way.' That's not always a compliment.";}else if(p>=20){t="CALCULATED PLAYER";d="Ron Swanson incarnate. Deliberate. Practical. Suspicious of fun. You brought a spreadsheet to this quiz. Boring, but immortal.";}else{t="HUMAN SAFETY MANUAL";d="Hermione Granger called. She says you're 'a bit much.' You chose every safe option. Pick the duck next time. Live a little.";}document.getElementById('p-title').textContent=t;document.getElementById('p-desc').textContent=d;var l='';for(var i=0;i<answers.length;i++)l+='<div class="choice-item">#'+(i+1)+': <span>'+answers[i].chose+'</span><br>'+answers[i].tag+'</div>';document.getElementById('choices-log').innerHTML=l;}
+    function restart(){current=0;answers=[];chaoticCount=0;document.getElementById('game').style.display='block';document.getElementById('results').style.display='none';showQuestion();}
+    showQuestion();
+    </script>
+</body>
+</html>

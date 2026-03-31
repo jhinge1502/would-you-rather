@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Would You Rather — Design Process Gallery</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(180deg, #0b0b0f, #0f0b1a);
+            color: #fff; min-height: 100vh;
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center; padding: 80px 20px 60px;
+            max-width: 700px; margin: 0 auto;
+        }
+        .hero h1 {
+            font-size: 3.5rem; font-weight: 900; margin-bottom: 8px;
+            background: linear-gradient(90deg, #f7971e, #ffd200);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .hero .subtitle { font-size: 1.15rem; color: #888; margin-bottom: 20px; }
+        .hero .desc {
+            font-size: 0.95rem; color: #555; line-height: 1.8; max-width: 560px; margin: 0 auto;
+        }
+
+        /* Phase sections */
+        .phase {
+            max-width: 1100px; margin: 0 auto; padding: 40px 24px;
+        }
+        .phase-header {
+            display: flex; align-items: baseline; gap: 16px;
+            margin-bottom: 8px;
+        }
+        .phase-num {
+            font-size: 0.7rem; font-weight: 800; letter-spacing: 3px;
+            text-transform: uppercase; color: #f7971e;
+        }
+        .phase-title {
+            font-size: 1.6rem; font-weight: 900;
+        }
+        .phase-desc {
+            font-size: 0.9rem; color: #555; line-height: 1.7; margin-bottom: 28px;
+            max-width: 700px;
+        }
+
+        /* Version grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+        }
+        .card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 24px 20px;
+            text-decoration: none; color: #fff;
+            transition: all 0.3s;
+            display: flex; flex-direction: column; gap: 8px;
+        }
+        .card:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(247,151,30,0.4);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+        }
+        .card-version {
+            font-size: 0.65rem; font-weight: 800; letter-spacing: 3px;
+            text-transform: uppercase; color: #f7971e;
+        }
+        .card-name { font-size: 1.05rem; font-weight: 800; line-height: 1.3; }
+        .card-desc { font-size: 0.75rem; color: #666; line-height: 1.5; }
+        .card-arrow {
+            margin-top: auto; font-size: 0.75rem; color: #444;
+            transition: color 0.3s;
+        }
+        .card:hover .card-arrow { color: #f7971e; }
+
+        /* Final pick */
+        .final-section {
+            max-width: 700px; margin: 40px auto 0; padding: 40px 24px;
+            text-align: center;
+        }
+        .final-badge {
+            display: inline-block; padding: 6px 20px; border-radius: 50px;
+            background: linear-gradient(135deg, #f7971e, #ffd200);
+            color: #0b0b0f; font-size: 0.7rem; font-weight: 800;
+            letter-spacing: 3px; text-transform: uppercase; margin-bottom: 16px;
+        }
+        .final-section h2 { font-size: 2rem; font-weight: 900; margin-bottom: 12px; }
+        .final-section p { font-size: 0.95rem; color: #888; line-height: 1.8; margin-bottom: 24px; }
+        .final-btn {
+            display: inline-block; padding: 16px 40px; border-radius: 50px;
+            background: linear-gradient(135deg, #f7971e, #ffd200);
+            color: #0b0b0f; text-decoration: none;
+            font-size: 1.1rem; font-weight: 800; transition: all 0.2s;
+        }
+        .final-btn:hover { transform: scale(1.05); box-shadow: 0 8px 30px rgba(247,151,30,0.3); }
+
+        /* Divider */
+        .divider {
+            max-width: 1100px; margin: 0 auto;
+            height: 1px; background: rgba(255,255,255,0.06);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center; padding: 40px 20px 60px;
+            font-size: 0.7rem; color: #333; letter-spacing: 2px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hero">
+        <h1>Would You Rather</h1>
+        <p class="subtitle">25 Iterations of One Idea</p>
+        <p class="desc">
+            This gallery documents the design journey of a "Would You Rather" quiz —
+            from wild, radically different explorations to a refined final product.
+            Each version is a fully interactive page. Click any card to try it.
+        </p>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Phase 1 -->
+    <div class="phase">
+        <div class="phase-header">
+            <span class="phase-num">Phase 1</span>
+            <h2 class="phase-title">Go Wide</h2>
+        </div>
+        <p class="phase-desc">
+            The first 10 versions explored radically different visual directions — dark cards, neon arcades,
+            magazine editorials, brutalist layouts, gradient parties, split-screen duels, newspaper tabloids,
+            vaporwave aesthetics, terminal UIs, and bubblegum Y2K. The goal was to push the concept into
+            surprising directions and see what resonated.
+        </p>
+        <div class="grid">
+            <a class="card" href="v1.html">
+                <span class="card-version">v1</span>
+                <span class="card-name">Bold Cards</span>
+                <span class="card-desc">Dark navy, red accents, card-based layout with colored borders</span>
+                <span class="card-arrow">→ Try it</span>
+            </a>
+            <a class="card" href="v2.html">
+                <span class="card-version">v2</span>
+                <span class="card-name">Neon Arcade</span>
+                <span class="card-desc">Pixel font, green grid, neon meter blocks, blinking warnings</span>
+                <span class="card-arrow">→ Try it</span>
+            </a>
+            <a class="card" href="v3.html">
+                <span class="card-version">v3</span>
+                <span class="card-name">Magazine Editorial</span>
+                <span class="card-desc">Cream paper, Playfair serif, elegant circle dials, roman numerals</span>
+                <span class="card-arrow">→ Try it</span>
+            </a>
+            <a class="card" href="v4.html">
+                <span class="card-version">v4</span>
+                <span class="card-name">Brutalist</span>
+                <span class="card-desc">Courier monospace, red/black/white, chunky borders, side-by-side options</span>
+                <span class="card-arrow">→ Try it</span>
+            </a>
+            <a class="card" href="v5.html">
+                <span class="card-version">v5</span>
+                <span class="card-name">Gradient Party</span>
+                <span class="card-desc">Purple gradient, Poppins font, colorful gradient pills, frosted glass</span>
+                <span class="card-arrow">→ Try it</span>
+            </a>
+            <a class="card" href="v6.html">
+                <span class="card-version">v6</span>
+                <span class="card-name">Split Screen Duel</span>
+                <span class="card-desc">Full-screen two-panel layout, red vs blue, hover expands your choice</span>
+                <span class="card-arrow">→ Try it</span>
+            </a>
+            <a class="card" href="v7.html">
+                <span class="card-version">v7</span>
+                <span class="card-name">Newspaper Tabloid</span>
+                <span class="card-desc">Gothic masthead, article-style options, headline-written results</span>
+                <span class="card-arrow">→ Try it</span>
+            </a>
+            <a class="card" href="v8.html">
+                <span class="card-version">v8</span>
+                <span class="card-name">Vaporwave</span>
+                <span class="card-desc">Deep purple, pink gradients, translucent glow cards, spaced-out text</span>
+                <span class="card-arrow">→ Try it</span>
+            </a>
+            <a class="card" href="v9.html">
+                <span class="card-version">v9</span>
+                <span class="card-name">Terminal / Hacker</span>
+                <span class="card-desc">macOS terminal window, syntax highlighting, ASCII progress bar</span>
+                <span class="card-arrow">→ Try it</span>
+            </a>
+            <a class="card" href="v10.html">
+                <span class="card-version">v10</span>
+                <span class="card-name">Y2K Bubblegum</span>
+                <span class="card-desc">Pink and cute, bouncing stars, "bestie" language, Gen-Z energy</span>
+                <span class="card-arrow">→ Try it</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Phase 2 -->
+    <div class="phase">
+        <div class="phase-header">
+            <span class="phase-num">Phase 2</span>
+            <h2 class="phase-title">Converge</h2>
+        </div>
+        <p class="phase-desc">
+            Versions 11–15 started mixing the strongest elements from Phase 1. The split layout met the gradients.
+            The terminal met vaporwave. The newspaper met bubblegum. Patterns emerged: I kept gravitating toward
+            dark backgrounds, glass effects, and clean typography. The bold type and minimal approach from v14
+            and the glassmorphism from v15 started defining the direction.
+        </p>
+        <div class="grid">
+            <a class="card" href="v11.html">
+                <span class="card-version">v11</span>
+                <span class="card-name">Split + Gradient</span>
+                <span class="card-desc">Full-screen split with purple/pink gradients, Poppins, gold accent text</span>
+                <span class="card-arrow">→ Try it</span>
+            </a>
+            <a class="card" href="v12.html">
+                <span class="card-version">v12</span>
+                <span class="card-name">Terminal + Vaporwave</span>
+                <span class="card-desc">Terminal window with purple/pink glow colors, code-style layout</span>
+                <span class="card-arrow">→ Try it</span>
+            </a>
+            <a class="card" href="v13.html">
+                <span class="card-version">v13</span>
+                <span class="card-name">Tabloid + Bubblegum</span>
+                <span class="card-desc">Serif headlines with pink energy, bouncing stars, gradient buttons</span>
+                <span class="card-arrow">→ Try it</span>
+            </a>
+            <a class="card" href="v14.html">
+                <span class="card-version">v14</span>
+                <span class="card-name">Dark Minimal</span>
+                <span class="card-desc">Ultra-clean dark layout, Bebas Neue headers, red accent, letter keys</span>
+                <span class="card-arrow">→ Try it</span>
+            </a>
+            <a class="card" href="v15.html">
+                <span class="card-version">v15</span>
+                <span class="card-name">Glassmorphism</span>
+                <span class="card-desc">Frosted glass cards, gradient text, key badges, modern app feel</span>
+                <span class="card-arrow">→ Try it</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Phase 3 -->
+    <div class="phase">
+        <div class="phase-header">
+            <span class="phase-num">Phase 3</span>
+            <h2 class="phase-title">Narrow Down</h2>
+        </div>
+        <p class="phase-desc">
+            Versions 16–20 tested variations within a narrower range. Warm amber vs electric blue vs sharp editorial.
+            By v19, the direction was clear: dark glass with gradient accents. v20 stripped everything to its
+            essentials. The dark + glass + gold-accent direction won out.
+        </p>
+        <div class="grid">
+            <a class="card" href="v16.html">
+                <span class="card-version">v16</span>
+                <span class="card-name">Warm Dark</span>
+                <span class="card-desc">Centered card, amber/orange accent, warm tones on dark background</span>
+                <span class="card-arrow">→ Try it</span>
+            </a>
+            <a class="card" href="v17.html">
+                <span class="card-version">v17</span>
+                <span class="card-name">Neon Accent</span>
+                <span class="card-desc">Electric blue accent, vertical stack, left-border hover, mono feel</span>
+                <span class="card-arrow">→ Try it</span>
+            </a>
+            <a class="card" href="v18.html">
+                <span class="card-version">v18</span>
+                <span class="card-name">Light Editorial</span>
+                <span class="card-desc">White background, sharp square corners, black borders, red accent</span>
+                <span class="card-arrow">→ Try it</span>
+            </a>
+            <a class="card" href="v19.html">
+                <span class="card-version">v19</span>
+                <span class="card-name">Dark Glass Refined</span>
+                <span class="card-desc">Glass cards with blur, purple-pink gradient, polished and app-like</span>
+                <span class="card-arrow">→ Try it</span>
+            </a>
+            <a class="card" href="v20.html">
+                <span class="card-version">v20</span>
+                <span class="card-name">Ultra Minimal</span>
+                <span class="card-desc">Nearly black, single red accent, text-only options, maximum whitespace</span>
+                <span class="card-arrow">→ Try it</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Phase 4 -->
+    <div class="phase">
+        <div class="phase-header">
+            <span class="phase-num">Phase 4</span>
+            <h2 class="phase-title">Refine</h2>
+        </div>
+        <p class="phase-desc">
+            The final 5 versions are all the same core design with incremental micro-refinements.
+            v21 established the base: dark glass + gold accents + letter badges. Each version after
+            that tweaked spacing, animations, progress indicators, and hover effects until v25
+            felt just right.
+        </p>
+        <div class="grid">
+            <a class="card" href="v21.html">
+                <span class="card-version">v21</span>
+                <span class="card-name">Final Direction</span>
+                <span class="card-desc">Dark glass, gold gradient accents, letter badges — the base</span>
+                <span class="card-arrow">→ Try it</span>
+            </a>
+            <a class="card" href="v22.html">
+                <span class="card-version">v22</span>
+                <span class="card-name">+ Padding & Animation</span>
+                <span class="card-desc">More card padding, larger text, fade-in transition on questions</span>
+                <span class="card-arrow">→ Try it</span>
+            </a>
+            <a class="card" href="v23.html">
+                <span class="card-version">v23</span>
+                <span class="card-name">+ Progress Bar</span>
+                <span class="card-desc">Swapped pips for a smooth progress bar, rounder buttons</span>
+                <span class="card-arrow">→ Try it</span>
+            </a>
+            <a class="card" href="v24.html">
+                <span class="card-version">v24</span>
+                <span class="card-name">+ Animated Border</span>
+                <span class="card-desc">Gradient border animation on card, scale hover, visible OR separator</span>
+                <span class="card-arrow">→ Try it</span>
+            </a>
+            <a class="card" href="v25.html">
+                <span class="card-version">v25</span>
+                <span class="card-name">Final Version</span>
+                <span class="card-desc">Perfect spacing, subtle gradient background, polished results page</span>
+                <span class="card-arrow">→ Try it</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Final Pick -->
+    <div class="final-section">
+        <div class="final-badge">Final Choice</div>
+        <h2>Version 25</h2>
+        <p>
+            After 24 iterations — from neon arcades to newspaper tabloids to bubblegum pink —
+            the design converged on a dark, glassy aesthetic with gold gradient accents.
+            It's clean, it's modern, and it lets the funny content breathe.
+            The animated border, smooth progress bar, and polished results page
+            make it feel like a real product.
+        </p>
+        <a class="final-btn" href="v25.html">Play the Final Version →</a>
+    </div>
+
+    <div class="footer">
+        MPCS 51238 — Design, Build, Ship — Spring 2026 — Assignment 1: Rapid Prototyping
+    </div>
+
+</body>
+</html>

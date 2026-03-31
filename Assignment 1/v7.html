@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Would You Rather v7 - Newspaper Tabloid</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; background: #f5f0e8; color: #1a1a1a; min-height: 100vh; }
+        .masthead {
+            text-align: center; padding: 30px 20px 20px;
+            border-bottom: 4px double #1a1a1a; margin: 0 30px;
+        }
+        .masthead h1 { font-family: 'UnifrakturMaguntia', cursive; font-size: 4rem; line-height: 1; }
+        .masthead-sub { font-size: 0.7rem; letter-spacing: 6px; text-transform: uppercase; color: #888; margin-top: 4px; }
+        .date-bar {
+            display: flex; justify-content: space-between; padding: 8px 30px;
+            font-size: 0.65rem; color: #aaa; letter-spacing: 2px; text-transform: uppercase;
+            border-bottom: 1px solid #ddd;
+        }
+        .main { max-width: 700px; margin: 30px auto; padding: 0 30px; }
+        .headline-box {
+            border: 3px solid #1a1a1a; padding: 30px; text-align: center; margin-bottom: 20px;
+        }
+        .edition-tag {
+            font-size: 0.6rem; letter-spacing: 4px; text-transform: uppercase; color: #c0392b;
+            margin-bottom: 10px;
+        }
+        .headline {
+            font-family: 'Libre Baskerville', serif; font-size: 1.6rem; font-weight: 700;
+            line-height: 1.4; margin-bottom: 16px;
+        }
+        .subhead { font-size: 0.85rem; color: #666; font-style: italic; margin-bottom: 24px; }
+        .option-col {
+            display: flex; flex-direction: column; gap: 12px;
+        }
+        .opt-btn {
+            display: block; width: 100%; padding: 20px 24px;
+            background: #fff; border: 2px solid #1a1a1a;
+            font-family: 'Libre Baskerville', serif; font-size: 1rem;
+            cursor: pointer; transition: all 0.2s; text-align: left; line-height: 1.5; color: #1a1a1a;
+        }
+        .opt-btn:hover { background: #1a1a1a; color: #f5f0e8; }
+        .opt-btn .opt-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 3px; color: #c0392b; display: block; margin-bottom: 4px; }
+        .opt-btn:hover .opt-label { color: #ff6b6b; }
+        .or-divider {
+            text-align: center; font-family: 'Libre Baskerville', serif; font-style: italic;
+            color: #aaa; font-size: 0.9rem; padding: 4px 0;
+        }
+        .prog-strip {
+            display: flex; gap: 4px; margin-bottom: 20px;
+        }
+        .prog-seg { flex: 1; height: 6px; background: #ddd; }
+        .prog-seg.done { background: #c0392b; }
+
+        /* Results */
+        .results { display: none; }
+        .results .extra-headline {
+            font-family: 'UnifrakturMaguntia', cursive; font-size: 2.5rem;
+            text-align: center; margin-bottom: 6px;
+        }
+        .results .extra-sub { text-align: center; font-size: 0.8rem; color: #888; margin-bottom: 24px; font-style: italic; }
+        .verdict-box {
+            background: #1a1a1a; color: #f5f0e8; padding: 36px; text-align: center; margin-bottom: 20px;
+        }
+        .verdict-title { font-family: 'UnifrakturMaguntia', cursive; font-size: 2rem; color: #ffd200; margin-bottom: 10px; }
+        .verdict-desc { font-family: 'Libre Baskerville', serif; font-size: 0.95rem; line-height: 1.8; font-style: italic; }
+        .stat-cols { display: flex; gap: 12px; margin-bottom: 20px; }
+        .stat-col { flex: 1; border: 2px solid #1a1a1a; padding: 16px; text-align: center; }
+        .stat-col .big { font-family: 'UnifrakturMaguntia', cursive; font-size: 2.4rem; }
+        .stat-col .sm { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: #888; margin-top: 2px; }
+        .log-section { border-top: 3px double #1a1a1a; padding-top: 16px; }
+        .log-section h3 { font-family: 'Libre Baskerville', serif; font-size: 1rem; margin-bottom: 12px; }
+        .log-entry { padding: 10px 0; border-bottom: 1px solid #ddd; font-size: 0.85rem; line-height: 1.6; }
+        .log-entry:last-child { border-bottom: none; }
+        .log-entry span { color: #c0392b; font-weight: 700; }
+        .again-btn {
+            display: block; width: 100%; padding: 16px; margin-top: 20px;
+            background: #1a1a1a; color: #f5f0e8; border: none;
+            font-family: 'Libre Baskerville', serif; font-size: 1rem; cursor: pointer;
+        }
+        .again-btn:hover { background: #333; }
+        .footer { text-align: center; padding: 24px; font-size: 0.55rem; color: #bbb; letter-spacing: 3px; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+    <div class="masthead">
+        <h1>The Daily Dilemma</h1>
+        <div class="masthead-sub">All the choices unfit to print</div>
+    </div>
+    <div class="date-bar"><span>Spring 2026</span><span>Price: Your Dignity</span><span>Vol. I, No. 1</span></div>
+
+    <div class="main">
+        <div id="game">
+            <div class="prog-strip" id="prog-strip"></div>
+            <div class="headline-box">
+                <div class="edition-tag" id="q-num">Dilemma No. 1</div>
+                <div class="headline">Would You Rather...</div>
+                <div class="subhead">The people demand answers. Choose wisely. (You won't.)</div>
+                <div class="option-col">
+                    <button class="opt-btn" onclick="pick('A')"><span class="opt-label">Option A</span><span id="optA"></span></button>
+                    <div class="or-divider">— or —</div>
+                    <button class="opt-btn" onclick="pick('B')"><span class="opt-label">Option B</span><span id="optB"></span></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="results" id="results">
+            <div class="extra-headline">Extra! Extra!</div>
+            <div class="extra-sub">Your personality has been exposed. Read all about it.</div>
+            <div class="verdict-box">
+                <div class="verdict-title" id="p-title"></div>
+                <p class="verdict-desc" id="p-desc"></p>
+            </div>
+            <div class="stat-cols">
+                <div class="stat-col"><div class="big" id="stat-chaotic">0</div><div class="sm">Chaotic</div></div>
+                <div class="stat-col"><div class="big" id="stat-safe">0</div><div class="sm">Safe</div></div>
+                <div class="stat-col"><div class="big" id="stat-unhinged">0</div><div class="sm">Unhinged</div></div>
+            </div>
+            <div class="log-section">
+                <h3>Full Record of Choices</h3>
+                <div id="choices-log"></div>
+            </div>
+            <button class="again-btn" onclick="restart()">Read Next Edition</button>
+        </div>
+    </div>
+    <div class="footer">The Daily Dilemma is not a real newspaper. Obviously.</div>
+
+    <script>
+    var questions=[
+        {a:"Have Michael Scott as your boss for life",b:"Eat only gas station sushi forever",chaotic:"B",tagA:"BREAKING: Local person accepts cringe leadership willingly",tagB:"HEALTH DEPT ISSUES WARNING to subscriber's intestines"},
+        {a:"Fight 100 duck-sized horses",b:"Fight 1 horse-sized duck",chaotic:"B",tagA:"ARMY OF TINY HORSES overwhelms local hero",tagB:"GIANT DUCK MENACES citizen in unprecedented showdown"},
+        {a:"Dwight Schrute as your roommate",b:"Ross Geller as your therapist",chaotic:"A",tagA:"BEET FARMER MOVES IN; lease agreement includes bear safety clause",tagB:"THERAPIST REFERENCES OWN DIVORCES in every session"},
+        {a:"Only speak in movie quotes for a year",b:"Laugh track after everything you say",chaotic:"A",tagA:"\"FRANKLY, MY DEAR\" — local resident, ordering at Starbucks",tagB:"SITCOM SOUND EFFECTS plague local citizen's every move"},
+        {a:"Elevator with Sheldon Cooper, 8 hours",b:"Gordon Ramsay roasts you on live TV",chaotic:"B",tagA:"TRAPPED: Physicist explains trains for 8 consecutive hours",tagB:"CELEBRITY CHEF DESTROYS person on national television"},
+        {a:"Ron Swanson's mustache permanently",b:"Kramer's hair permanently",chaotic:"B",tagA:"MUSTACHE COMMANDS RESPECT at local hardware store",tagB:"UNCONTROLLABLE HAIR causes daily slapstick incidents"},
+        {a:"No phone for a year",b:"No shower for 3 months",chaotic:"B",tagA:"BRAVE CITIZEN goes fully analog; friends forget they exist",tagB:"HYGIENE CRISIS: coworkers form 15-foot perimeter"},
+        {a:"Passive-aggressive Morgan Freeman narration",b:"Hype man who's always wrong",chaotic:"B",tagA:"NARRATOR JUDGES every meal choice in soothing voice",tagB:"HYPE MAN CELEBRATES wrong accomplishments daily"},
+        {a:"Live in The Office universe",b:"Live in Parks and Rec universe",chaotic:"A",tagA:"CITIZEN RELOCATES to Scranton voluntarily. Experts baffled.",tagB:"PAWNEE WELCOMES new resident; raccoon population unaffected"},
+        {a:"GoT theme every time you sit",b:"DUN DUN every time you stand",chaotic:"A",tagA:"ORCHESTRAL SCORE accompanies every bathroom visit",tagB:"COURTROOM SOUND EFFECT disrupts local church service"}
+    ];
+    var current=0,answers=[],chaoticCount=0;
+    function buildStrip(){var h='';for(var i=0;i<questions.length;i++)h+='<div class="prog-seg" id="seg'+i+'"></div>';document.getElementById('prog-strip').innerHTML=h;}
+    function showQuestion(){var q=questions[current];document.getElementById('q-num').textContent='Dilemma No. '+(current+1);document.getElementById('optA').textContent=q.a;document.getElementById('optB').textContent=q.b;for(var i=0;i<current;i++)document.getElementById('seg'+i).classList.add('done');}
+    function pick(choice){var q=questions[current],c=choice===q.chaotic;if(c)chaoticCount++;answers.push({num:current+1,chose:choice==='A'?q.a:q.b,tag:choice==='A'?q.tagA:q.tagB});current++;if(current<questions.length)showQuestion();else showResults();}
+    function showResults(){document.getElementById('game').style.display='none';document.getElementById('results').style.display='block';var s=questions.length-chaoticCount,p=Math.round(chaoticCount/questions.length*100);document.getElementById('stat-chaotic').textContent=chaoticCount;document.getElementById('stat-safe').textContent=s;document.getElementById('stat-unhinged').textContent=p+'%';var t,d;if(p>=80){t="The Menace";d="Sources confirm: you are the Michael Scott of decisions. Every choice was chaotic. Your friends have been contacted for comment. They declined.";}else if(p>=60){t="Controlled Chaos";d="Witnesses describe you as 'Chandler Bing energy' — sarcastic, unpredictable, somehow still employed. Authorities are monitoring the situation.";}else if(p>=40){t="The Wildcard";d="Reports indicate Jake Peralta vibes. 'Fun but questionable,' says one anonymous source. 'We love them but we worry,' says another.";}else if(p>=20){t="The Strategist";d="Analysts confirm Ron Swanson-level pragmatism. Subject brought a pro/con list to an internet quiz. Outlook: immortal but lonely.";}else{t="Safety Manual";d="In a stunning display of caution, subject chose every safe option. Hermione Granger has issued a statement: 'Even I would've picked the duck.'";}document.getElementById('p-title').textContent=t;document.getElementById('p-desc').textContent=d;var l='';for(var i=0;i<answers.length;i++)l+='<div class="log-entry">#'+(i+1)+': <span>'+answers[i].chose+'</span><br>'+answers[i].tag+'</div>';document.getElementById('choices-log').innerHTML=l;}
+    function restart(){current=0;answers=[];chaoticCount=0;document.getElementById('game').style.display='block';document.getElementById('results').style.display='none';buildStrip();showQuestion();}
+    buildStrip();showQuestion();
+    </script>
+</body>
+</html>

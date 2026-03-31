@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Would You Rather v11 - Split + Gradient</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Poppins', sans-serif; background: #111; color: #fff;
+            min-height: 100vh; overflow-x: hidden;
+        }
+        .top-bar {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(12px);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 14px 28px; border-bottom: 1px solid #222;
+        }
+        .top-bar h1 { font-size: 1.2rem; font-weight: 900; letter-spacing: 2px; }
+        .top-bar h1 span { background: linear-gradient(90deg,#f7971e,#ffd200); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .dot-row { display: flex; gap: 6px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; background: #222; transition: all 0.3s; }
+        .dot.done { background: linear-gradient(135deg,#f093fb,#f5576c); }
+        .dot.active { background: #fff; box-shadow: 0 0 10px #fff; }
+
+        .split { display: flex; min-height: 100vh; padding-top: 52px; }
+        .side {
+            flex: 1; display: flex; align-items: center; justify-content: center;
+            padding: 50px 40px; cursor: pointer; transition: all 0.4s ease; position: relative; overflow: hidden;
+        }
+        .side::after {
+            content: ''; position: absolute; inset: 0; opacity: 0; transition: opacity 0.3s;
+        }
+        .side:hover { flex: 1.4; }
+        .side:hover::after { opacity: 0.1; }
+        .side-a { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .side-a::after { background: #fff; }
+        .side-b { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .side-b::after { background: #fff; }
+        .side-content { position: relative; z-index: 2; text-align: center; max-width: 300px; }
+        .side-label { font-size: 4rem; font-weight: 900; opacity: 0.15; margin-bottom: 10px; }
+        .side-text { font-size: 1.3rem; font-weight: 700; line-height: 1.5; }
+        .vs-pill {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); z-index: 5;
+            background: #111; border: 2px solid #fff; border-radius: 50px;
+            padding: 10px 22px; font-weight: 900; font-size: 0.9rem; letter-spacing: 3px;
+        }
+        .q-info {
+            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+            font-size: 0.75rem; color: #666; z-index: 5; letter-spacing: 2px;
+        }
+
+        .results {
+            display: none; position: fixed; inset: 0; z-index: 20;
+            background: #111; overflow-y: auto; padding: 70px 20px 40px;
+        }
+        .results-inner { max-width: 580px; margin: 0 auto; }
+        .results h2 { font-size: 2.5rem; font-weight: 900; text-align: center; margin-bottom: 4px; }
+        .results h2 span { background: linear-gradient(90deg,#f7971e,#ffd200); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .results .sub { text-align: center; color: #555; margin-bottom: 28px; }
+        .verdict-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 24px; padding: 36px; text-align: center; margin-bottom: 20px;
+        }
+        .verdict-title { font-size: 1.8rem; font-weight: 900; margin-bottom: 8px; }
+        .verdict-desc { font-size: 1rem; line-height: 1.7; opacity: 0.9; }
+        .stat-row { display: flex; gap: 10px; margin-bottom: 16px; }
+        .stat-card { flex: 1; background: #1a1a1a; border-radius: 16px; padding: 20px; text-align: center; }
+        .stat-card .num { font-size: 2.2rem; font-weight: 900; background: linear-gradient(135deg,#f093fb,#f5576c); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .stat-card .lbl { font-size: 0.7rem; color: #555; margin-top: 2px; }
+        .log-section { background: #1a1a1a; border-radius: 20px; padding: 24px; }
+        .log-section h3 { font-size: 0.85rem; color: #666; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; }
+        .log-item { padding: 10px 0; border-bottom: 1px solid #222; font-size: 0.9rem; color: #888; line-height: 1.5; }
+        .log-item:last-child { border-bottom: none; }
+        .log-item span { color: #f093fb; font-weight: 700; }
+        .restart-btn {
+            display: block; width: 100%; padding: 18px; margin-top: 20px;
+            border-radius: 50px; border: none;
+            background: linear-gradient(135deg, #f7971e, #ffd200);
+            color: #111; font-family: 'Poppins', sans-serif;
+            font-size: 1.1rem; font-weight: 800; cursor: pointer;
+        }
+        .restart-btn:hover { transform: scale(1.02); }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <h1>WOULD YOU <span>RATHER</span></h1>
+        <div class="dot-row" id="dots"></div>
+    </div>
+    <div class="split" id="game">
+        <div class="side side-a" onclick="pick('A')">
+            <div class="side-content"><div class="side-label">A</div><div class="side-text" id="optA"></div></div>
+        </div>
+        <div class="vs-pill" id="vs-pill">OR</div>
+        <div class="side side-b" onclick="pick('B')">
+            <div class="side-content"><div class="side-label">B</div><div class="side-text" id="optB"></div></div>
+        </div>
+    </div>
+    <div class="q-info" id="q-info">Question 1 of 10</div>
+    <div class="results" id="results">
+        <div class="results-inner">
+            <h2>Your <span>Verdict</span></h2>
+            <p class="sub">Based on your questionable judgment...</p>
+            <div class="verdict-card"><div class="verdict-title" id="p-title"></div><p class="verdict-desc" id="p-desc"></p></div>
+            <div class="stat-row">
+                <div class="stat-card"><div class="num" id="stat-chaotic">0</div><div class="lbl">Chaotic</div></div>
+                <div class="stat-card"><div class="num" id="stat-safe">0</div><div class="lbl">Safe</div></div>
+                <div class="stat-card"><div class="num" id="stat-unhinged">0</div><div class="lbl">Unhinged %</div></div>
+            </div>
+            <div class="log-section"><h3>Your Choices</h3><div id="choices-log"></div></div>
+            <button class="restart-btn" onclick="restart()">Play Again</button>
+        </div>
+    </div>
+    <script>
+    var questions=[{a:"Have Michael Scott as your boss for life",b:"Eat only gas station sushi forever",chaotic:"B",tagA:"Chose cringe over food poisoning",tagB:"Chose food poisoning over cringe"},{a:"Fight 100 duck-sized horses",b:"Fight 1 horse-sized duck",chaotic:"B",tagA:"Swarm strategy",tagB:"Boss battle energy"},{a:"Dwight Schrute as your roommate",b:"Ross Geller as your therapist",chaotic:"A",tagA:"Bears. Beets. No boundaries.",tagB:"Three divorces. Every session."},{a:"Only speak in movie quotes for a year",b:"Laugh track after everything you say",chaotic:"A",tagA:"\"Here's looking at you\" — at the DMV",tagB:"Your breakup gets a laugh track"},{a:"Elevator with Sheldon Cooper, 8 hours",b:"Gordon Ramsay roasts you on live TV",chaotic:"B",tagA:"Fun facts. No escape. 8 hours.",tagB:"IT'S RAW — about your life choices"},{a:"Ron Swanson's mustache permanently",b:"Kramer's hair permanently",chaotic:"B",tagA:"Instant authority energy",tagB:"Slapstick entrance, every room"},{a:"No phone for a year",b:"No shower for 3 months",chaotic:"B",tagA:"Brave. Disconnected. Forgotten.",tagB:"Social distancing enforced by you"},{a:"Passive-aggressive Morgan Freeman narration",b:"Hype man who's always wrong",chaotic:"B",tagA:"\"He microwaved fish. At work. Again.\"",tagB:"\"NAILING THIS INTERVIEW\" (wrong building)"},{a:"Live in The Office universe",b:"Live in Parks and Rec universe",chaotic:"A",tagA:"Scranton. By choice. Wow.",tagB:"Pawnee: waffles make it worth it"},{a:"GoT theme every time you sit",b:"DUN DUN every time you stand",chaotic:"A",tagA:"Every bathroom trip is cinematic",tagB:"Standing at a wedding: DUN DUN"}];
+    var current=0,answers=[],chaoticCount=0;
+    function buildDots(){var h='';for(var i=0;i<questions.length;i++)h+='<div class="dot" id="dot'+i+'"></div>';document.getElementById('dots').innerHTML=h;}
+    function updateDots(){for(var i=0;i<questions.length;i++){var d=document.getElementById('dot'+i);d.className='dot';if(i<current)d.classList.add('done');if(i===current)d.classList.add('active');}}
+    function showQuestion(){var q=questions[current];document.getElementById('optA').textContent=q.a;document.getElementById('optB').textContent=q.b;document.getElementById('q-info').textContent='Question '+(current+1)+' of '+questions.length;updateDots();}
+    function pick(c){var q=questions[current],ch=c===q.chaotic;if(ch)chaoticCount++;answers.push({num:current+1,chose:c==='A'?q.a:q.b,tag:c==='A'?q.tagA:q.tagB});current++;if(current<questions.length)showQuestion();else showResults();}
+    function showResults(){document.getElementById('game').style.display='none';document.getElementById('q-info').style.display='none';document.getElementById('vs-pill').style.display='none';document.getElementById('results').style.display='block';var s=questions.length-chaoticCount,p=Math.round(chaoticCount/questions.length*100);document.getElementById('stat-chaotic').textContent=chaoticCount;document.getElementById('stat-safe').textContent=s;document.getElementById('stat-unhinged').textContent=p+'%';var t,d;if(p>=80){t="The Absolute Menace";d="Michael Scott energy at critical mass. Every choice was unhinged. You'd fight the duck AND try to befriend it. Your friends are worried but entertained.";}else if(p>=60){t="Controlled Chaos";d="Chandler Bing coded — sarcastic shell, chaos underneath. You flirt with danger but still pay your bills on time. Usually.";}else if(p>=40){t="Balanced Wildcard";d="Jake Peralta energy — fun, unpredictable, occasionally responsible. 'A lot but in a good way' is generous but we'll allow it.";}else if(p>=20){t="The Strategist";d="Ron Swanson incarnate. Practical, deliberate, suspicious of joy. You optimized a fun quiz. That says everything.";}else{t="Safety Manual";d="Hermione Granger would say 'a bit much.' You chose every safe option. This quiz was a threat to you. Pick the duck next time.";}document.getElementById('p-title').textContent=t;document.getElementById('p-desc').textContent=d;var l='';for(var i=0;i<answers.length;i++)l+='<div class="log-item">'+(i+1)+'. <span>'+answers[i].chose+'</span><br>'+answers[i].tag+'</div>';document.getElementById('choices-log').innerHTML=l;}
+    function restart(){current=0;answers=[];chaoticCount=0;document.getElementById('game').style.display='flex';document.getElementById('q-info').style.display='block';document.getElementById('vs-pill').style.display='block';document.getElementById('results').style.display='none';showQuestion();}
+    buildDots();showQuestion();
+    </script>
+</body>
+</html>

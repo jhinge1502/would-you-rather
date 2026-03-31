@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Would You Rather? — v20 Dark Minimal Refined</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Space Grotesk',sans-serif;background:#080808;color:#e0e0e0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+.container{width:100%;max-width:560px;}
+
+/* Progress dots */
+.dots{display:flex;justify-content:center;gap:8px;margin-bottom:48px;}
+.dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.08);transition:all 0.4s ease;}
+.dot.active{background:#e94560;box-shadow:0 0 12px rgba(233,69,96,0.4);}
+.dot.done{background:rgba(233,69,96,0.35);}
+
+.counter{font-size:12px;color:rgba(255,255,255,0.2);letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;text-align:center;}
+h1{font-size:13px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#e94560;text-align:center;margin-bottom:48px;}
+.question{font-size:24px;font-weight:700;line-height:1.4;text-align:center;margin-bottom:48px;color:#f5f5f5;}
+.options{display:flex;flex-direction:column;gap:8px;align-items:center;}
+.opt-btn{background:none;border:none;padding:14px 4px;font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:500;color:rgba(255,255,255,0.5);cursor:pointer;transition:all 0.3s ease;position:relative;text-align:center;max-width:440px;}
+.opt-btn::after{content:'';position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:0;height:1px;background:#e94560;transition:width 0.3s ease;}
+.opt-btn:hover{color:#fff;}
+.opt-btn:hover::after{width:100%;}
+
+/* Divider */
+.or-divider{font-size:11px;color:rgba(255,255,255,0.15);text-transform:uppercase;letter-spacing:3px;text-align:center;padding:8px 0;}
+
+/* Results */
+.results{text-align:center;}
+.personality-title{font-size:32px;font-weight:700;color:#e94560;margin-bottom:8px;}
+.personality-desc{font-size:15px;color:rgba(255,255,255,0.4);line-height:1.7;margin-bottom:40px;max-width:420px;margin-left:auto;margin-right:auto;}
+.stats{display:flex;justify-content:center;gap:32px;margin-bottom:40px;}
+.stat-val{font-size:28px;font-weight:700;color:#e94560;}
+.stat-label{font-size:11px;color:rgba(255,255,255,0.2);text-transform:uppercase;letter-spacing:1px;margin-top:4px;}
+.log{text-align:left;margin-bottom:40px;}
+.log-title{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,0.2);margin-bottom:16px;}
+.log-item{font-size:13px;color:rgba(255,255,255,0.35);padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.03);display:flex;justify-content:space-between;gap:12px;}
+.log-chose{flex:1;}
+.log-tag{color:rgba(233,69,96,0.6);font-style:italic;white-space:nowrap;}
+.play-again{background:none;border:1px solid rgba(233,69,96,0.4);border-radius:8px;padding:12px 32px;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:#e94560;cursor:pointer;transition:all 0.3s ease;}
+.play-again:hover{background:#e94560;color:#080808;}
+.hidden{display:none;}
+</style>
+</head>
+<body>
+<div class="container">
+<div id="quiz">
+<div class="dots" id="dots"></div>
+<h1>Would You Rather?</h1>
+<div class="counter" id="counter"></div>
+<div class="question" id="question"></div>
+<div class="options">
+<button class="opt-btn" id="btnA" onclick="pick('A')"></button>
+<div class="or-divider">— or —</div>
+<button class="opt-btn" id="btnB" onclick="pick('B')"></button>
+</div>
+</div>
+<div id="results" class="hidden results">
+<div class="personality-title" id="rTitle"></div>
+<div class="personality-desc" id="rDesc"></div>
+<div class="stats" id="stats"></div>
+<div class="log" id="log"></div>
+<button class="play-again" onclick="restart()">Play Again</button>
+</div>
+</div>
+<script>
+var questions=[{a:"Have Michael Scott as your boss for life",b:"Eat only gas station sushi forever",chaotic:"B",tagA:"Chose cringe management",tagB:"Chose food poisoning"},{a:"Fight 100 duck-sized horses",b:"Fight 1 horse-sized duck",chaotic:"B",tagA:"Swarm strategy",tagB:"Boss battle"},{a:"Dwight Schrute as your roommate",b:"Ross Geller as your therapist",chaotic:"A",tagA:"Bears. Beets. No boundaries.",tagB:"Three divorces per session"},{a:"Only speak in movie quotes",b:"Laugh track after everything",chaotic:"A",tagA:"Cinematic conversations",tagB:"Sitcom life unlocked"},{a:"8hrs elevator with Sheldon",b:"Gordon Ramsay roasts you live",chaotic:"B",tagA:"Physics lecture, no exit",tagB:"National humiliation"},{a:"Ron Swanson's mustache forever",b:"Kramer's hair forever",chaotic:"B",tagA:"Authority energy",tagB:"Slapstick life"},{a:"No phone for a year",b:"No shower for 3 months",chaotic:"B",tagA:"Disconnected but clean",tagB:"Connected but alone"},{a:"Passive-aggressive Morgan Freeman",b:"Wrong hype man",chaotic:"B",tagA:"Narrated disappointment",tagB:"Misplaced enthusiasm"},{a:"Live in The Office universe",b:"Live in Parks and Rec universe",chaotic:"A",tagA:"Scranton forever",tagB:"Pawnee forever"},{a:"GoT theme when you sit",b:"DUN DUN when you stand",chaotic:"A",tagA:"Cinematic seating",tagB:"Legal standing"}];
+var current=0,answers=[],chaoticCount=0;
+function buildDots(){var h='';for(var i=0;i<questions.length;i++)h+='<div class="dot" id="dot'+i+'"></div>';document.getElementById('dots').innerHTML=h;}
+function updateDots(){for(var i=0;i<questions.length;i++){var d=document.getElementById('dot'+i);d.className='dot';if(i<current)d.className='dot done';else if(i===current)d.className='dot active';}}
+function showQuestion(){var q=questions[current];document.getElementById('counter').textContent=(current+1)+' / '+questions.length;document.getElementById('question').textContent=q.a+' or '+q.b+'?';document.getElementById('btnA').textContent=q.a;document.getElementById('btnB').textContent=q.b;updateDots();}
+function pick(c){var q=questions[current],ch=c===q.chaotic;if(ch)chaoticCount++;answers.push({num:current+1,chose:c==='A'?q.a:q.b,tag:c==='A'?q.tagA:q.tagB});current++;if(current<questions.length)showQuestion();else showResults();}
+function showResults(){document.getElementById('quiz').classList.add('hidden');document.getElementById('results').classList.remove('hidden');var pct=Math.round(chaoticCount/questions.length*100);var safe=100-pct;var unhinged=Math.min(100,Math.round(pct*1.2));var title,desc;if(pct>=80){title='The Absolute Menace';desc='Michael Scott energy. Pure chaos. You would fight the horse-sized duck and try to ride it home.';}else if(pct>=60){title='Controlled Chaos';desc='Chandler Bing coded. Sarcastic, questionable decisions, but somehow still functional.';}else if(pct>=40){title='Balanced Wildcard';desc='Jake Peralta energy. Fun, occasionally responsible, always entertaining.';}else if(pct>=20){title='The Strategist';desc='Ron Swanson incarnate. Practical, calculated, and deeply suspicious of joy.';}else{title='Safety Manual';desc='Hermione Granger energy. You chose every safe option. Your survival rate is impressive.';}document.getElementById('rTitle').textContent=title;document.getElementById('rDesc').textContent=desc;document.getElementById('stats').innerHTML='<div class="stat"><div class="stat-val">'+pct+'%</div><div class="stat-label">Chaotic</div></div><div class="stat"><div class="stat-val">'+safe+'%</div><div class="stat-label">Safe</div></div><div class="stat"><div class="stat-val">'+unhinged+'%</div><div class="stat-label">Unhinged</div></div>';var logHtml='<div class="log-title">Choice Log</div>';for(var i=0;i<answers.length;i++){logHtml+='<div class="log-item"><span class="log-chose">Q'+(answers[i].num)+': '+answers[i].chose+'</span><span class="log-tag">'+answers[i].tag+'</span></div>';}document.getElementById('log').innerHTML=logHtml;}
+function restart(){current=0;answers=[];chaoticCount=0;document.getElementById('results').classList.add('hidden');document.getElementById('quiz').classList.remove('hidden');showQuestion();}
+buildDots();showQuestion();
+</script>
+</body>
+</html>

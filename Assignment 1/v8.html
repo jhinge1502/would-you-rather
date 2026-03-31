@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Would You Rather v8 - Vaporwave</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rubik+Mono+One&family=Space+Grotesk:wght@400;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: #1a0030;
+            color: #fff; min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 40px 20px;
+            background-image:
+                linear-gradient(transparent 0%, rgba(255,0,200,0.04) 50%, transparent 100%),
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,0,200,0.03) 2px, rgba(255,0,200,0.03) 4px);
+        }
+        h1 {
+            font-family: 'Rubik Mono One', sans-serif; font-size: 2.2rem; text-align: center;
+            background: linear-gradient(180deg, #ff6ad5, #c774e8, #ad8cff, #8795e8, #94d0ff);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            margin-bottom: 4px;
+        }
+        .tagline { font-size: 0.9rem; color: #ad8cff; margin-bottom: 40px; text-align: center; opacity: 0.7; }
+        .container { max-width: 600px; width: 100%; }
+
+        .progress-row { display: flex; gap: 6px; margin-bottom: 20px; }
+        .prog-block { flex: 1; height: 10px; border-radius: 3px; background: rgba(255,255,255,0.08); transition: background 0.4s; }
+        .prog-block.done { background: linear-gradient(135deg, #ff6ad5, #c774e8); }
+        .prog-block.active { background: #fff; box-shadow: 0 0 12px rgba(255,255,255,0.5); }
+        .q-counter { text-align: center; font-size: 0.75rem; color: #8795e8; margin-bottom: 20px; letter-spacing: 2px; }
+
+        .card {
+            background: linear-gradient(135deg, rgba(255,106,213,0.1), rgba(173,140,255,0.1));
+            border: 1px solid rgba(255,106,213,0.3);
+            border-radius: 24px; padding: 40px 30px; text-align: center;
+            backdrop-filter: blur(6px);
+        }
+        .wyr { font-size: 0.85rem; color: #c774e8; margin-bottom: 24px; letter-spacing: 3px; text-transform: uppercase; }
+        .opt-btn {
+            display: block; width: 100%; padding: 22px 20px;
+            border: 2px solid rgba(255,106,213,0.4); border-radius: 16px;
+            background: rgba(255,255,255,0.05); color: #fff;
+            font-family: 'Space Grotesk', sans-serif; font-size: 1.05rem; font-weight: 700;
+            cursor: pointer; transition: all 0.3s; line-height: 1.5;
+        }
+        .opt-btn:hover {
+            background: linear-gradient(135deg, #ff6ad5, #c774e8);
+            border-color: transparent; transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(199,116,232,0.3);
+        }
+        .vs-text {
+            font-family: 'Rubik Mono One', sans-serif; font-size: 1rem;
+            color: #ad8cff; margin: 14px 0; opacity: 0.5;
+        }
+
+        .results { display: none; }
+        .results h2 {
+            font-family: 'Rubik Mono One', sans-serif; font-size: 2rem; text-align: center;
+            background: linear-gradient(180deg, #ff6ad5, #c774e8, #ad8cff);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            margin-bottom: 6px;
+        }
+        .results .sub { text-align: center; color: #8795e8; margin-bottom: 28px; font-size: 0.85rem; }
+        .verdict-card {
+            background: linear-gradient(135deg, #ff6ad5, #c774e8, #ad8cff);
+            border-radius: 24px; padding: 36px; text-align: center; margin-bottom: 20px;
+        }
+        .verdict-title { font-family: 'Rubik Mono One', sans-serif; font-size: 1.5rem; margin-bottom: 10px; }
+        .verdict-desc { font-size: 0.95rem; line-height: 1.7; opacity: 0.95; }
+        .stats-row { display: flex; gap: 10px; margin-bottom: 16px; }
+        .stat-glass {
+            flex: 1; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,106,213,0.2);
+            border-radius: 16px; padding: 18px; text-align: center;
+        }
+        .stat-glass .num { font-family: 'Rubik Mono One', sans-serif; font-size: 2rem; color: #ff6ad5; }
+        .stat-glass .lbl { font-size: 0.65rem; color: #8795e8; margin-top: 2px; }
+        .log-glass {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(173,140,255,0.2);
+            border-radius: 20px; padding: 24px; margin-top: 12px;
+        }
+        .log-glass h3 { font-size: 0.8rem; color: #ad8cff; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; }
+        .log-entry { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 0.85rem; color: #ccc; line-height: 1.6; }
+        .log-entry:last-child { border-bottom: none; }
+        .log-entry span { color: #ff6ad5; font-weight: 700; }
+        .restart-btn {
+            display: block; width: 100%; padding: 18px; margin-top: 20px;
+            border-radius: 50px; border: none;
+            background: linear-gradient(135deg, #ff6ad5, #c774e8);
+            color: #fff; font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.1rem; font-weight: 700; cursor: pointer;
+        }
+        .restart-btn:hover { transform: scale(1.02); box-shadow: 0 8px 30px rgba(199,116,232,0.4); }
+        .disclaimer { text-align: center; font-size: 0.65rem; color: rgba(255,255,255,0.15); margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <h1>WOULD YOU RATHER</h1>
+    <p class="tagline">a e s t h e t i c   d i l e m m a s</p>
+    <div class="container">
+        <div id="game">
+            <div class="progress-row" id="prog-row"></div>
+            <div class="q-counter" id="q-counter">1 / 10</div>
+            <div class="card">
+                <div class="wyr">Would You Rather...</div>
+                <button class="opt-btn" id="optA" onclick="pick('A')"></button>
+                <div class="vs-text">or</div>
+                <button class="opt-btn" id="optB" onclick="pick('B')"></button>
+            </div>
+        </div>
+        <div class="results" id="results">
+            <h2>RESULTS</h2>
+            <p class="sub">your vibe has been computed</p>
+            <div class="verdict-card">
+                <div class="verdict-title" id="p-title"></div>
+                <p class="verdict-desc" id="p-desc"></p>
+            </div>
+            <div class="stats-row">
+                <div class="stat-glass"><div class="num" id="stat-chaotic">0</div><div class="lbl">Chaotic</div></div>
+                <div class="stat-glass"><div class="num" id="stat-safe">0</div><div class="lbl">Safe</div></div>
+                <div class="stat-glass"><div class="num" id="stat-unhinged">0</div><div class="lbl">Unhinged %</div></div>
+            </div>
+            <div class="log-glass">
+                <h3>Choice Log</h3>
+                <div id="choices-log"></div>
+            </div>
+            <button class="restart-btn" onclick="restart()">Try Again</button>
+        </div>
+    </div>
+    <p class="disclaimer">this quiz is a vibe, not a diagnosis</p>
+    <script>
+    var questions=[
+        {a:"Have Michael Scott as your boss for life",b:"Eat only gas station sushi forever",chaotic:"B",tagA:"Corporate cringe accepted",tagB:"Your gut: betrayed"},
+        {a:"Fight 100 duck-sized horses",b:"Fight 1 horse-sized duck",chaotic:"B",tagA:"Swarm strategy",tagB:"Boss fight energy"},
+        {a:"Dwight Schrute as your roommate",b:"Ross Geller as your therapist",chaotic:"A",tagA:"Beet. Bear. Battlestar. Daily.",tagB:"Three divorces worth of therapy"},
+        {a:"Only speak in movie quotes for a year",b:"Laugh track after everything you say",chaotic:"A",tagA:"\"Hasta la vista\" — you, leaving brunch",tagB:"Laugh track at your performance review"},
+        {a:"Elevator with Sheldon Cooper, 8 hours",b:"Gordon Ramsay roasts you on live TV",chaotic:"B",tagA:"Physics lecture. No exit.",tagB:"\"IT'S RAW\" — about your outfit"},
+        {a:"Ron Swanson's mustache permanently",b:"Kramer's hair permanently",chaotic:"B",tagA:"You radiate authority now",tagB:"Every doorway is a comedy sketch"},
+        {a:"No phone for a year",b:"No shower for 3 months",chaotic:"B",tagA:"Analog era. People forget you exist.",tagB:"Eau de Regret"},
+        {a:"Passive-aggressive Morgan Freeman narration",b:"Hype man who's always wrong",chaotic:"B",tagA:"\"He chose store-brand. How fitting.\"",tagB:"\"THIS GUY IS CRUSHING IT\" (you're lost in IKEA)"},
+        {a:"Live in The Office universe",b:"Live in Parks and Rec universe",chaotic:"A",tagA:"Scranton. Forever. Whyyyyy.",tagB:"Waffles and wholesome government"},
+        {a:"GoT theme every time you sit",b:"DUN DUN every time you stand",chaotic:"A",tagA:"Taking a seat has never been more dramatic",tagB:"Every morning: DUN DUN"}
+    ];
+    var current=0,answers=[],chaoticCount=0;
+    function buildProg(){var h='';for(var i=0;i<questions.length;i++)h+='<div class="prog-block" id="pb'+i+'"></div>';document.getElementById('prog-row').innerHTML=h;}
+    function updateProg(){for(var i=0;i<questions.length;i++){var b=document.getElementById('pb'+i);b.className='prog-block';if(i<current)b.classList.add('done');if(i===current)b.classList.add('active');}}
+    function showQuestion(){var q=questions[current];document.getElementById('q-counter').textContent=(current+1)+' / '+questions.length;document.getElementById('optA').textContent=q.a;document.getElementById('optB').textContent=q.b;updateProg();}
+    function pick(choice){var q=questions[current],c=choice===q.chaotic;if(c)chaoticCount++;answers.push({num:current+1,chose:choice==='A'?q.a:q.b,tag:choice==='A'?q.tagA:q.tagB});current++;if(current<questions.length)showQuestion();else showResults();}
+    function showResults(){document.getElementById('game').style.display='none';document.getElementById('results').style.display='block';var s=questions.length-chaoticCount,p=Math.round(chaoticCount/questions.length*100);document.getElementById('stat-chaotic').textContent=chaoticCount;document.getElementById('stat-safe').textContent=s;document.getElementById('stat-unhinged').textContent=p+'%';var t,d;if(p>=80){t="Total Menace";d="Michael Scott but make it aesthetic. Every choice was unhinged. You'd fight the duck and post it on your story. Iconic. Dangerous.";}else if(p>=60){t="Chaotic Neutral";d="Chandler Bing energy — sarcasm as a shield, bad decisions as a hobby. You vibe with chaos but set boundaries. Sometimes.";}else if(p>=40){t="Balanced Vibes";d="Jake Peralta coded — fun, unpredictable, occasionally productive. Your aesthetic is 'chaos with good intentions.'";}else if(p>=20){t="Strategic Mind";d="Ron Swanson but with wifi. Calculated, methodical, suspicious of whimsy. You optimized this quiz. That's concerning.";}else{t="Pure Order";d="Hermione Granger energy. You treated this quiz like an exam. Relax. The duck isn't real. Nothing here matters. Breathe.";}document.getElementById('p-title').textContent=t;document.getElementById('p-desc').textContent=d;var l='';for(var i=0;i<answers.length;i++)l+='<div class="log-entry">'+(i+1)+'. <span>'+answers[i].chose+'</span><br>'+answers[i].tag+'</div>';document.getElementById('choices-log').innerHTML=l;}
+    function restart(){current=0;answers=[];chaoticCount=0;document.getElementById('game').style.display='block';document.getElementById('results').style.display='none';buildProg();showQuestion();}
+    buildProg();showQuestion();
+    </script>
+</body>
+</html>

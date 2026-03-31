@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Would You Rather? — v19 Dark Glass Refined</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:#0a0a0f;color:#e8e8ef;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+.container{width:100%;max-width:580px;}
+.progress-bar{width:100%;height:3px;background:rgba(255,255,255,0.06);border-radius:3px;margin-bottom:32px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,#a855f7,#ec4899);border-radius:3px;transition:width 0.5s cubic-bezier(.4,0,.2,1);}
+.card{background:rgba(255,255,255,0.04);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:40px 32px;text-align:center;}
+.counter{font-size:13px;color:rgba(255,255,255,0.35);margin-bottom:20px;letter-spacing:1px;text-transform:uppercase;}
+h1{font-size:15px;font-weight:600;letter-spacing:2px;text-transform:uppercase;background:linear-gradient(135deg,#a855f7,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:32px;}
+.question{font-size:22px;font-weight:700;line-height:1.35;margin-bottom:36px;color:#f0f0f5;}
+.options{display:flex;flex-direction:column;gap:14px;}
+.opt-btn{background:rgba(255,255,255,0.04);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:18px 24px;font-family:'Inter',sans-serif;font-size:16px;font-weight:500;color:#d0d0da;cursor:pointer;transition:all 0.3s ease;position:relative;overflow:hidden;}
+.opt-btn::before{content:'';position:absolute;inset:0;border-radius:14px;padding:1px;background:linear-gradient(135deg,#a855f7,#ec4899);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity 0.3s ease;}
+.opt-btn:hover{background:rgba(255,255,255,0.08);color:#fff;transform:translateY(-2px);box-shadow:0 8px 32px rgba(168,85,247,0.15);}
+.opt-btn:hover::before{opacity:1;}
+.opt-btn:active{transform:translateY(0);}
+
+/* Results */
+.results-card{background:rgba(255,255,255,0.04);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:40px 32px;text-align:center;}
+.personality-title{font-size:28px;font-weight:800;background:linear-gradient(135deg,#a855f7,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px;}
+.personality-desc{font-size:15px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:32px;}
+.stats{display:flex;justify-content:center;gap:24px;margin-bottom:32px;}
+.stat{text-align:center;}
+.stat-val{font-size:26px;font-weight:800;background:linear-gradient(135deg,#a855f7,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.stat-label{font-size:11px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px;margin-top:4px;}
+.log{text-align:left;margin-bottom:32px;}
+.log-title{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.3);margin-bottom:12px;}
+.log-item{font-size:13px;color:rgba(255,255,255,0.45);padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;justify-content:space-between;gap:12px;}
+.log-chose{flex:1;}
+.log-tag{color:rgba(168,85,247,0.7);font-style:italic;white-space:nowrap;}
+.play-again{background:linear-gradient(135deg,#a855f7,#ec4899);border:none;border-radius:12px;padding:14px 36px;font-family:'Inter',sans-serif;font-size:15px;font-weight:600;color:#fff;cursor:pointer;transition:all 0.3s ease;}
+.play-again:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(168,85,247,0.3);}
+.hidden{display:none;}
+</style>
+</head>
+<body>
+<div class="container">
+<div id="quiz">
+<div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+<div class="card">
+<h1>Would You Rather?</h1>
+<div class="counter" id="counter"></div>
+<div class="question" id="question"></div>
+<div class="options">
+<button class="opt-btn" id="btnA" onclick="pick('A')"></button>
+<button class="opt-btn" id="btnB" onclick="pick('B')"></button>
+</div>
+</div>
+</div>
+<div id="results" class="hidden">
+<div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+<div class="results-card">
+<div class="personality-title" id="rTitle"></div>
+<div class="personality-desc" id="rDesc"></div>
+<div class="stats" id="stats"></div>
+<div class="log" id="log"></div>
+<button class="play-again" onclick="restart()">Play Again</button>
+</div>
+</div>
+</div>
+<script>
+var questions=[{a:"Have Michael Scott as your boss for life",b:"Eat only gas station sushi forever",chaotic:"B",tagA:"Chose cringe management",tagB:"Chose food poisoning"},{a:"Fight 100 duck-sized horses",b:"Fight 1 horse-sized duck",chaotic:"B",tagA:"Swarm strategy",tagB:"Boss battle"},{a:"Dwight Schrute as your roommate",b:"Ross Geller as your therapist",chaotic:"A",tagA:"Bears. Beets. No boundaries.",tagB:"Three divorces per session"},{a:"Only speak in movie quotes",b:"Laugh track after everything",chaotic:"A",tagA:"Cinematic conversations",tagB:"Sitcom life unlocked"},{a:"8hrs elevator with Sheldon",b:"Gordon Ramsay roasts you live",chaotic:"B",tagA:"Physics lecture, no exit",tagB:"National humiliation"},{a:"Ron Swanson's mustache forever",b:"Kramer's hair forever",chaotic:"B",tagA:"Authority energy",tagB:"Slapstick life"},{a:"No phone for a year",b:"No shower for 3 months",chaotic:"B",tagA:"Disconnected but clean",tagB:"Connected but alone"},{a:"Passive-aggressive Morgan Freeman",b:"Wrong hype man",chaotic:"B",tagA:"Narrated disappointment",tagB:"Misplaced enthusiasm"},{a:"Live in The Office universe",b:"Live in Parks and Rec universe",chaotic:"A",tagA:"Scranton forever",tagB:"Pawnee forever"},{a:"GoT theme when you sit",b:"DUN DUN when you stand",chaotic:"A",tagA:"Cinematic seating",tagB:"Legal standing"}];
+var current=0,answers=[],chaoticCount=0;
+function showQuestion(){var q=questions[current];document.getElementById('counter').textContent='Question '+(current+1)+' of '+questions.length;document.getElementById('question').textContent=q.a+' — or — '+q.b+'?';document.getElementById('btnA').textContent=q.a;document.getElementById('btnB').textContent=q.b;document.getElementById('progress').style.width=(current/questions.length*100)+'%';}
+function pick(c){var q=questions[current],ch=c===q.chaotic;if(ch)chaoticCount++;answers.push({num:current+1,chose:c==='A'?q.a:q.b,tag:c==='A'?q.tagA:q.tagB});current++;if(current<questions.length)showQuestion();else showResults();}
+function showResults(){document.getElementById('quiz').classList.add('hidden');document.getElementById('results').classList.remove('hidden');var pct=Math.round(chaoticCount/questions.length*100);var safe=100-pct;var unhinged=Math.min(100,Math.round(pct*1.2));var title,desc;if(pct>=80){title='The Absolute Menace';desc='Michael Scott energy. Pure chaos. You would fight the horse-sized duck and try to ride it home.';}else if(pct>=60){title='Controlled Chaos';desc='Chandler Bing coded. Sarcastic, questionable decisions, but somehow still functional.';}else if(pct>=40){title='Balanced Wildcard';desc='Jake Peralta energy. Fun, occasionally responsible, always entertaining.';}else if(pct>=20){title='The Strategist';desc='Ron Swanson incarnate. Practical, calculated, and deeply suspicious of joy.';}else{title='Safety Manual';desc='Hermione Granger energy. You chose every safe option. Your survival rate is impressive.';}document.getElementById('rTitle').textContent=title;document.getElementById('rDesc').textContent=desc;document.getElementById('stats').innerHTML='<div class="stat"><div class="stat-val">'+pct+'%</div><div class="stat-label">Chaotic</div></div><div class="stat"><div class="stat-val">'+safe+'%</div><div class="stat-label">Safe</div></div><div class="stat"><div class="stat-val">'+unhinged+'%</div><div class="stat-label">Unhinged</div></div>';var logHtml='<div class="log-title">Your Choices</div>';for(var i=0;i<answers.length;i++){logHtml+='<div class="log-item"><span class="log-chose">Q'+(answers[i].num)+': '+answers[i].chose+'</span><span class="log-tag">'+answers[i].tag+'</span></div>';}document.getElementById('log').innerHTML=logHtml;}
+function restart(){current=0;answers=[];chaoticCount=0;document.getElementById('results').classList.add('hidden');document.getElementById('quiz').classList.remove('hidden');showQuestion();}
+showQuestion();
+</script>
+</body>
+</html>

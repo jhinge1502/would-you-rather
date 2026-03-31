@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Would You Rather? v24</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#0b0b0f;color:#fff;font-family:'Inter',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 20px;}
+.container{max-width:620px;width:100%;margin:0 auto;}
+h1{font-weight:900;font-size:1.8rem;text-align:center;margin-bottom:8px;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.subtitle{text-align:center;color:rgba(255,255,255,0.4);font-size:0.85rem;margin-bottom:32px;}
+.progress-wrap{margin-bottom:8px;}
+.progress-bar-bg{width:100%;height:3px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,#f7971e,#ffd200);border-radius:2px;transition:width 0.4s ease;}
+.progress-text{text-align:center;font-size:0.7rem;color:rgba(255,255,255,0.3);margin-top:6px;margin-bottom:24px;letter-spacing:1px;}
+@keyframes borderShift{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
+.card-wrap{position:relative;border-radius:25px;padding:1px;background:linear-gradient(270deg,rgba(247,151,30,0.3),rgba(255,210,0,0.15),rgba(200,80,192,0.2),rgba(130,80,230,0.15),rgba(247,151,30,0.3));background-size:300% 300%;animation:borderShift 6s ease infinite;}
+.card{background:rgba(11,11,15,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:24px;padding:44px;opacity:1;transition:opacity 0.35s ease;}
+.card.fade-out{opacity:0;}
+.q-num{font-size:0.75rem;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px;}
+.or-sep{text-align:center;font-size:0.8rem;color:rgba(255,255,255,0.35);letter-spacing:3px;margin:16px 0;text-transform:uppercase;font-weight:600;}
+.option{width:100%;padding:18px 22px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:14px;color:#fff;font-family:'Inter',sans-serif;font-size:1.1rem;font-weight:600;cursor:pointer;text-align:left;display:flex;align-items:center;gap:14px;transition:all 0.25s;}
+.option:hover{background:linear-gradient(135deg,rgba(200,80,192,0.15),rgba(130,80,230,0.15));border-color:rgba(200,80,192,0.3);transform:scale(1.02);}
+.badge{min-width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:800;color:rgba(255,255,255,0.5);}
+/* Results */
+.results{display:none;}
+.verdict-card{background:rgba(255,255,255,0.06);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1);border-radius:24px;padding:44px;text-align:center;margin-bottom:20px;}
+.verdict-title{font-size:1.6rem;font-weight:900;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;}
+.verdict-desc{color:rgba(255,255,255,0.55);font-size:0.95rem;line-height:1.6;}
+.stats{display:flex;gap:10px;margin-bottom:20px;}
+.stat-box{flex:1;background:rgba(255,255,255,0.06);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:20px;text-align:center;}
+.stat-num{font-size:1.5rem;font-weight:900;background:linear-gradient(90deg,#f7971e,#ffd200);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.stat-label{font-size:0.7rem;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:1px;margin-top:4px;}
+.log-card{background:rgba(255,255,255,0.06);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1);border-radius:24px;padding:30px;margin-bottom:20px;}
+.log-title{font-size:0.75rem;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:2px;margin-bottom:16px;}
+.log-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);}
+.log-item:last-child{border-bottom:none;}
+.log-q{font-size:0.85rem;color:rgba(255,255,255,0.7);flex:1;}
+.log-tag{font-size:0.7rem;color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.05);padding:4px 10px;border-radius:20px;white-space:nowrap;margin-left:10px;}
+.play-again{width:100%;padding:16px;background:linear-gradient(90deg,#f7971e,#ffd200);border:none;border-radius:14px;color:#0b0b0f;font-family:'Inter',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;transition:transform 0.2s;}
+.play-again:hover{transform:scale(1.02);}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Would You Rather?</h1>
+<p class="subtitle">10 dilemmas. No good answers.</p>
+
+<div id="quiz">
+<div class="progress-wrap">
+<div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill" style="width:0%"></div></div>
+</div>
+<div class="progress-text" id="progressText"></div>
+<div class="card-wrap">
+<div class="card" id="card">
+<p class="q-num" id="qnum"></p>
+<div style="margin-bottom:14px;">
+<button class="option" onclick="pick('A')"><span class="badge">A</span><span id="optA"></span></button>
+</div>
+<div class="or-sep">— OR —</div>
+<div style="margin-top:14px;">
+<button class="option" onclick="pick('B')"><span class="badge">B</span><span id="optB"></span></button>
+</div>
+</div>
+</div>
+</div>
+
+<div class="results" id="results">
+<div class="verdict-card">
+<div class="verdict-title" id="verdictTitle"></div>
+<div class="verdict-desc" id="verdictDesc"></div>
+</div>
+<div class="stats">
+<div class="stat-box"><div class="stat-num" id="statChaotic"></div><div class="stat-label">Chaotic</div></div>
+<div class="stat-box"><div class="stat-num" id="statSafe"></div><div class="stat-label">Safe</div></div>
+<div class="stat-box"><div class="stat-num" id="statUnhinged"></div><div class="stat-label">Unhinged %</div></div>
+</div>
+<div class="log-card">
+<div class="log-title">Your Choices</div>
+<div id="logList"></div>
+</div>
+<button class="play-again" onclick="restart()">Play Again</button>
+</div>
+</div>
+
+<script>
+var questions=[{a:"Have Michael Scott as your boss for life",b:"Eat only gas station sushi forever",chaotic:"B",tagA:"Chose cringe management",tagB:"Chose food poisoning"},{a:"Fight 100 duck-sized horses",b:"Fight 1 horse-sized duck",chaotic:"B",tagA:"Swarm strategy",tagB:"Boss battle"},{a:"Dwight Schrute as your roommate",b:"Ross Geller as your therapist",chaotic:"A",tagA:"Bears. Beets. No boundaries.",tagB:"Three divorces per session"},{a:"Only speak in movie quotes",b:"Laugh track after everything",chaotic:"A",tagA:"Cinematic conversations",tagB:"Sitcom life unlocked"},{a:"8hrs elevator with Sheldon",b:"Gordon Ramsay roasts you live",chaotic:"B",tagA:"Physics lecture, no exit",tagB:"National humiliation"},{a:"Ron Swanson's mustache forever",b:"Kramer's hair forever",chaotic:"B",tagA:"Authority energy",tagB:"Slapstick life"},{a:"No phone for a year",b:"No shower for 3 months",chaotic:"B",tagA:"Disconnected but clean",tagB:"Connected but alone"},{a:"Passive-aggressive Morgan Freeman",b:"Wrong hype man",chaotic:"B",tagA:"Narrated disappointment",tagB:"Misplaced enthusiasm"},{a:"Live in The Office universe",b:"Live in Parks and Rec universe",chaotic:"A",tagA:"Scranton forever",tagB:"Pawnee forever"},{a:"GoT theme when you sit",b:"DUN DUN when you stand",chaotic:"A",tagA:"Cinematic seating",tagB:"Legal standing"}];
+
+var current=0,answers=[],chaoticCount=0;
+
+function showQuestion(){var q=questions[current];var pct=Math.round((current/questions.length)*100);document.getElementById('progressFill').style.width=pct+'%';document.getElementById('progressText').textContent='Question '+(current+1)+' of '+questions.length;document.getElementById('qnum').textContent='Question '+(current+1)+' of '+questions.length;document.getElementById('optA').textContent=q.a;document.getElementById('optB').textContent=q.b;var card=document.getElementById('card');card.classList.add('fade-out');setTimeout(function(){card.classList.remove('fade-out');},50);}
+
+function pick(c){var q=questions[current],ch=c===q.chaotic;if(ch)chaoticCount++;answers.push({num:current+1,chose:c==='A'?q.a:q.b,tag:c==='A'?q.tagA:q.tagB});current++;if(current<questions.length)showQuestion();else showResults();}
+
+function showResults(){document.getElementById('quiz').style.display='none';document.getElementById('results').style.display='block';var pct=Math.round((chaoticCount/questions.length)*100);var safe=questions.length-chaoticCount;var title,desc;if(pct>=80){title='The Absolute Menace';desc='Michael Scott energy, pure chaos. You would fight the duck and ride it into battle.';}else if(pct>=60){title='Controlled Chaos';desc='Chandler Bing coded — sarcastic, unpredictable, but somehow still functional.';}else if(pct>=40){title='Balanced Wildcard';desc='Jake Peralta energy — fun, occasionally responsible, always entertaining.';}else if(pct>=20){title='The Strategist';desc='Ron Swanson incarnate — practical, measured, suspicious of joy.';}else{title='Safety Manual';desc='Hermione Granger energy — you chose every safe option. Respect.';}document.getElementById('verdictTitle').textContent=title;document.getElementById('verdictDesc').textContent=desc;document.getElementById('statChaotic').textContent=chaoticCount;document.getElementById('statSafe').textContent=safe;document.getElementById('statUnhinged').textContent=pct+'%';var log='';for(var i=0;i<answers.length;i++){log+='<div class="log-item"><span class="log-q">Q'+answers[i].num+': '+answers[i].chose+'</span><span class="log-tag">'+answers[i].tag+'</span></div>';}document.getElementById('logList').innerHTML=log;}
+
+function restart(){current=0;answers=[];chaoticCount=0;document.getElementById('quiz').style.display='block';document.getElementById('results').style.display='none';showQuestion();}
+
+showQuestion();
+</script>
+</body>
+</html>
